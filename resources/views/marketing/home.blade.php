@@ -1,0 +1,81 @@
+<x-layouts.guest>
+    <div class="flex flex-col gap-24 py-16">
+        {{-- Hero --}}
+        <div class="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
+            <flux:badge color="blue" size="sm">Für Scrum Master gebaut</flux:badge>
+
+            <flux:heading size="xl" class="text-4xl font-bold tracking-tight sm:text-5xl">
+                Weniger Organisation. Mehr Coaching.
+            </flux:heading>
+
+            <flux:text class="text-lg text-zinc-500 dark:text-zinc-400">
+                Scrumly nimmt dir die organisatorische Last von Sprint-Events, Retrospektiven und Impediments ab,
+                damit du dich auf das konzentrieren kannst, was wirklich zählt: dein Team.
+            </flux:text>
+
+            <div class="flex gap-3">
+                <flux:button :href="route('register')" variant="primary" wire:navigate>
+                    Kostenlos starten
+                </flux:button>
+                <flux:button :href="route('login')" variant="ghost" wire:navigate>
+                    Anmelden
+                </flux:button>
+            </div>
+        </div>
+
+        {{-- Features --}}
+        <div class="mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            @foreach ([
+                [
+                    'icon' => 'calendar-days',
+                    'title' => 'Sprint- & Event-Management',
+                    'description' => 'Kapazitätsplanung und automatische Agenden für Daily, Planning, Review und Retro.',
+                ],
+                [
+                    'icon' => 'chat-bubble-left-right',
+                    'title' => 'Retrospektiven-Tool',
+                    'description' => 'Bewährte Templates, anonymes Feedback und Action Items, die wirklich nachverfolgt werden.',
+                ],
+                [
+                    'icon' => 'exclamation-triangle',
+                    'title' => 'Impediment-Tracker',
+                    'description' => 'Blocker zentral erfassen statt in Zetteln oder Chat-Nachrichten verlieren.',
+                ],
+                [
+                    'icon' => 'chart-bar',
+                    'title' => 'Team-Metriken & Health',
+                    'description' => 'Velocity, Burndown und regelmäßige Team-Health-Checks auf einen Blick.',
+                ],
+                [
+                    'icon' => 'academic-cap',
+                    'title' => 'Coaching-Assistent',
+                    'description' => 'Checklisten und Hinweise, damit kein Scrum-Event-Detail vergessen wird.',
+                ],
+                [
+                    'icon' => 'user-group',
+                    'title' => 'Mehrere Teams',
+                    'description' => 'Scrum-of-Scrums-Ansicht für Scrum Master, die mehrere Teams betreuen.',
+                ],
+            ] as $feature)
+                <flux:card class="flex flex-col gap-3">
+                    <span class="flex size-10 items-center justify-center rounded-lg bg-zinc-900/5 dark:bg-white/10">
+                        <flux:icon :icon="$feature['icon']" variant="outline" class="size-5" />
+                    </span>
+                    <flux:heading size="lg">{{ $feature['title'] }}</flux:heading>
+                    <flux:text class="text-zinc-500 dark:text-zinc-400">{{ $feature['description'] }}</flux:text>
+                </flux:card>
+            @endforeach
+        </div>
+
+        {{-- CTA --}}
+        <flux:card class="mx-auto flex w-full max-w-4xl flex-col items-center gap-4 p-12 text-center">
+            <flux:heading size="xl">Bereit, deinem Team Zeit zurückzugeben?</flux:heading>
+            <flux:text class="text-zinc-500 dark:text-zinc-400">
+                Leg jetzt los &mdash; kostenlos und in wenigen Minuten eingerichtet.
+            </flux:text>
+            <flux:button :href="route('register')" variant="primary" wire:navigate>
+                Jetzt kostenlos registrieren
+            </flux:button>
+        </flux:card>
+    </div>
+</x-layouts.guest>
