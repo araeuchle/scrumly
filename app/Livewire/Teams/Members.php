@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Teams;
 
+use App\Livewire\Forms\TeamMemberForm;
 use App\Models\Team;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
@@ -12,11 +13,7 @@ class Members extends Component
 {
     public Team $team;
 
-    public string $firstName = '';
-
-    public string $lastName = '';
-
-    public int $defaultCapacityPercent = 100;
+    public TeamMemberForm $form;
 
     public function mount(Team $team): void
     {
@@ -29,11 +26,7 @@ class Members extends Component
     {
         $this->authorize('update', $this->team);
 
-        $validated = $this->validate([
-            'firstName' => ['required', 'string', 'max:255'],
-            'lastName' => ['required', 'string', 'max:255'],
-            'defaultCapacityPercent' => ['required', 'integer', 'min:0', 'max:100'],
-        ]);
+        $validated = $this->form->validate();
 
         $this->team->teamMembers()->create([
             'first_name' => $validated['firstName'],
@@ -41,8 +34,7 @@ class Members extends Component
             'default_capacity_percent' => $validated['defaultCapacityPercent'],
         ]);
 
-        $this->reset('firstName', 'lastName');
-        $this->defaultCapacityPercent = 100;
+        $this->form->reset();
     }
 
     public function updateCapacity(int $teamMemberId, int $value): void

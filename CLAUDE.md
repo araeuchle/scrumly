@@ -40,6 +40,35 @@ Vite on `5183`. Adjust there if needed, not in `compose.yaml`.
 
 ## Stack notes
 
+- **Navigation is built around a "current team" stored on the user**, not just the `{team}` route
+  parameter. `users.current_team_id` (nullable FK to `teams`, `nullOnDelete`) tracks which team is
+  active; `User::resolveCurrentTeam()` is the single source of truth for reading it — it returns
+  the stored team only if it still belongs to the user (checked via `isOwnedBy()`, since a plain
+  `belongsTo` relation would happily resolve a team owned by someone else if the column were ever
+  wrong), otherwise falls back to the user's first team (`oldest('id')`) and self-heals the column
+  to match. The sidebar (`components/layouts/app.blade.php`) calls this once per request to decide
+  whether to render the team-scoped nav group (Mitglieder/Sprints/Event-Typen/Impediments) at all,
+  and embeds `<livewire:teams.switcher />` — a small persistent child component
+  (`App\Livewire\Teams\Switcher`) with a `<flux:select>` bound to `currentTeamId` — so switching
+  teams is one request that updates `current_team_id` and redirects, not a page link. Every place
+  a team becomes "current" (creating one in `Teams\Index::createTeam()`, clicking a team card via
+  `Teams\Index::selectTeam()`, or the switcher's `updatedCurrentTeamId()`) must write
+  `current_team_id` through a query scoped to `$user->teams()` (e.g. `->findOrFail($teamId)`)
+  rather than loading the team by raw ID first — that scoping is what stops a user from switching
+  into a team they don't own, there's no separate authorization check layered on top of it.
+- **Validation in Livewire components always goes through a `Livewire\Form` object**, never
+  `$this->validate()` inline on the component. Every form lives under `app/Livewire/Forms/`
+  (e.g. `TeamEventTypeForm`, `ImpedimentForm`), is exposed as `public FooForm $form` on the
+  component, bound in Blade as `wire:model="form.fieldName"`, and submitted with
+  `$this->form->validate()`. Note classic Laravel `FormRequest` classes do *not* work here —
+  Livewire action methods aren't resolved through the controller pipeline, so the container can't
+  inject one the way it does for a controller method. Validation errors land in the `form.*`
+  error-bag namespace (`assertHasErrors('form.title')` in tests, `@error('form.title')` in
+  Blade), not under the bare field name. Cross-aggregate/business-rule checks that need context
+  the Form doesn't have (e.g. "this sprint must belong to this team") stay out of the Form's
+  `rules()` and are checked explicitly in the component after `$this->form->validate()` passes,
+  using `$this->addError('form.field', '...')` — see `Impediments/Index::save()`'s `sprintId`
+  check for the pattern.
 - Flux Pro is a licensed package from a private Composer repository (`composer.fluxui.dev`).
   Its credentials live in the project-local `auth.json` (gitignored, never commit it).
 - Auth (login, registration, password reset) is built with class-based Livewire components
@@ -81,6 +110,23 @@ Vite on `5183`. Adjust there if needed, not in `compose.yaml`.
   `wire:model.live.debounce.750ms` (or similar) instead for anything that needs to persist as the
   user types without an explicit save button, as done in `SprintEvents/Show`'s agenda and notes
   fields. Don't reach for `.blur` again without re-verifying it against a real browser first.
+- Impediment tracking (`app/Livewire/Impediments/Index.php`, route `teams.impediments`) belongs
+  directly to a `Team` (`impediments.team_id`, cascades on delete), with an **optional**
+  `sprint_id` (`nullOnDelete`) — an impediment doesn't have to be raised inside a sprint, and
+  deleting the sprint it was raised in must not delete the impediment. Status is a three-stage
+  lifecycle on `ImpedimentStatus` (`open` → `escalated` → `resolved`, matching the product's
+  "erfassen, eskalieren, auflösen" pitch), not a boolean flag; `escalate()`/`resolve()`/`reopen()`
+  on the model set the matching `escalated_at`/`resolved_at` timestamps, and `reopen()` clears
+  both so an impediment can go back to `open` from either later state. Priority
+  (`ImpedimentPriority`: low/medium/high/critical) is a separate enum, independent of status.
+  Reporter and owner (`reported_by`, `owner`) are deliberately plain free-text columns, not
+  `TeamMember` references — unlike capacity/speaking-time tracking, nothing here requires a
+  structured link to a roster entry. `ImpedimentPolicy` needs a `viewAny(User, Team)` ability
+  (the index page is per-team) in addition to the usual `view`/`create`/`update`/`delete`; because
+  `create`/`viewAny` only have a `Team` in hand (no `Impediment` instance yet), they must be
+  authorized as `$this->authorize('create', [Impediment::class, $team])`, not
+  `$this->authorize('create', $team)` — passing the bare `Team` model resolves `TeamPolicy`
+  instead of `ImpedimentPolicy` and silently checks the wrong thing.
 
 ## Testing
 

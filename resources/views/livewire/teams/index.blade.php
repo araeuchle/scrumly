@@ -18,7 +18,7 @@
 
             <form wire:submit="createTeam" class="flex flex-col gap-4 sm:flex-row sm:items-end">
                 <div class="flex-1">
-                    <flux:input wire:model="name" label="Teamname" placeholder="z. B. Team Phoenix" autofocus />
+                    <flux:input wire:model="form.name" label="Teamname" placeholder="z. B. Team Phoenix" autofocus />
                 </div>
                 <div class="flex gap-2">
                     <flux:button type="submit" variant="primary">Anlegen</flux:button>
@@ -41,14 +41,14 @@
     @else
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($teams as $team)
-                <a href="{{ route('sprints.index', $team) }}" wire:navigate class="block">
+                <button type="button" wire:click="selectTeam({{ $team->id }})" class="block w-full text-left">
                     <flux:card class="flex flex-col gap-3 transition hover:border-zinc-300 dark:hover:border-zinc-600">
                         <flux:heading size="lg">{{ $team->name }}</flux:heading>
                         <flux:text class="text-zinc-500 dark:text-zinc-400">
                             {{ $team->sprints_count }} {{ $team->sprints_count === 1 ? 'Sprint' : 'Sprints' }}
                         </flux:text>
                     </flux:card>
-                </a>
+                </button>
             @endforeach
         </div>
     @endif

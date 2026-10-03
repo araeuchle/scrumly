@@ -11,13 +11,13 @@
 
         <form wire:submit="addMember" class="flex flex-col gap-4 sm:flex-row sm:items-end">
             <div class="flex-1">
-                <flux:input wire:model="firstName" label="Vorname" placeholder="Max" />
+                <flux:input wire:model="form.firstName" label="Vorname" placeholder="Max" />
             </div>
             <div class="flex-1">
-                <flux:input wire:model="lastName" label="Nachname" placeholder="Mustermann" />
+                <flux:input wire:model="form.lastName" label="Nachname" placeholder="Mustermann" />
             </div>
             <div class="w-full sm:w-40">
-                <flux:input wire:model="defaultCapacityPercent" label="Standardkapazität (%)" type="number" min="0" max="100" />
+                <flux:input wire:model="form.defaultCapacityPercent" label="Standardkapazität (%)" type="number" min="0" max="100" />
             </div>
             <flux:button type="submit" variant="primary">Hinzufügen</flux:button>
         </form>

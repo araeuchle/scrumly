@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Teams;
 
+use App\Livewire\Forms\TeamForm;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
@@ -12,7 +13,7 @@ use Livewire\Component;
 #[Layout('components.layouts.app')]
 class Index extends Component
 {
-    public string $name = '';
+    public TeamForm $form;
 
     public bool $showCreateForm = false;
 
@@ -20,11 +21,22 @@ class Index extends Component
     {
         $this->authorize('create', Team::class);
 
-        $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-        ]);
+        $validated = $this->form->validate();
 
-        $team = $this->currentUser()->teams()->create($validated);
+        $user = $this->currentUser();
+        $team = $user->teams()->create($validated);
+
+        $user->forceFill(['current_team_id' => $team->id])->save();
+
+        $this->redirectRoute('sprints.index', $team, navigate: true);
+    }
+
+    public function selectTeam(int $teamId): void
+    {
+        $user = $this->currentUser();
+        $team = $user->teams()->findOrFail($teamId);
+
+        $user->forceFill(['current_team_id' => $team->id])->save();
 
         $this->redirectRoute('sprints.index', $team, navigate: true);
     }

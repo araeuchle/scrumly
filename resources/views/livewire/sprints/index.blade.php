@@ -6,15 +6,6 @@
         </div>
 
         <div class="flex gap-2">
-            @can('update', $team)
-                <flux:button variant="ghost" icon="calendar-days" :href="route('teams.event-types', $team)" wire:navigate>
-                    Event-Typen
-                </flux:button>
-                <flux:button variant="ghost" icon="user-group" :href="route('teams.members', $team)" wire:navigate>
-                    Mitglieder
-                </flux:button>
-            @endcan
-
             @can('create', [\App\Models\Sprint::class, $team])
                 @if ($hasEventTypes)
                     <flux:button variant="primary" icon="plus" :href="route('sprints.create', $team)" wire:navigate>

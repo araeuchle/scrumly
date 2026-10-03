@@ -10,8 +10,8 @@ test('users can authenticate using the login screen', function () {
     ]);
 
     Livewire::test(Login::class)
-        ->set('email', $user->email)
-        ->set('password', 'test1234!')
+        ->set('form.email', $user->email)
+        ->set('form.password', 'test1234!')
         ->call('login')
         ->assertRedirect(route('dashboard'));
 
@@ -24,10 +24,10 @@ test('users cannot authenticate with an invalid password', function () {
     ]);
 
     Livewire::test(Login::class)
-        ->set('email', $user->email)
-        ->set('password', 'wrong-password')
+        ->set('form.email', $user->email)
+        ->set('form.password', 'wrong-password')
         ->call('login')
-        ->assertHasErrors('email');
+        ->assertHasErrors('form.email');
 
     $this->assertGuest();
 });
@@ -39,16 +39,16 @@ test('login is rate limited after too many failed attempts', function () {
 
     for ($i = 0; $i < 5; $i++) {
         Livewire::test(Login::class)
-            ->set('email', $user->email)
-            ->set('password', 'wrong-password')
+            ->set('form.email', $user->email)
+            ->set('form.password', 'wrong-password')
             ->call('login');
     }
 
     Livewire::test(Login::class)
-        ->set('email', $user->email)
-        ->set('password', 'test1234!')
+        ->set('form.email', $user->email)
+        ->set('form.password', 'test1234!')
         ->call('login')
-        ->assertHasErrors('email');
+        ->assertHasErrors('form.email');
 
     $this->assertGuest();
 });

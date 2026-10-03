@@ -4,6 +4,7 @@ namespace App\Livewire\Sprints;
 
 use App\Enums\SprintEventStatus;
 use App\Enums\SprintStatus;
+use App\Livewire\Forms\SprintForm;
 use App\Models\Sprint;
 use App\Models\SprintCapacity;
 use App\Models\SprintEvent;
@@ -18,33 +19,22 @@ class Create extends Component
 {
     public Team $team;
 
-    public string $name = '';
-
-    public string $goal = '';
-
-    public string $startsAt = '';
-
-    public string $endsAt = '';
+    public SprintForm $form;
 
     public function mount(Team $team): void
     {
         $this->authorize('create', [Sprint::class, $team]);
 
         $this->team = $team;
-        $this->startsAt = now()->toDateString();
-        $this->endsAt = now()->addWeeks(2)->toDateString();
+        $this->form->startsAt = now()->toDateString();
+        $this->form->endsAt = now()->addWeeks(2)->toDateString();
     }
 
     public function save(): void
     {
         $this->authorize('create', [Sprint::class, $this->team]);
 
-        $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'goal' => ['nullable', 'string', 'max:2000'],
-            'startsAt' => ['required', 'date'],
-            'endsAt' => ['required', 'date', 'after_or_equal:startsAt'],
-        ]);
+        $validated = $this->form->validate();
 
         $sprint = $this->team->sprints()->create([
             'name' => $validated['name'],

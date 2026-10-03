@@ -10,7 +10,7 @@
 
     <form wire:submit="sendResetLink" class="flex flex-col gap-6">
         <flux:input
-            wire:model="email"
+            wire:model="form.email"
             label="E-Mail-Adresse"
             type="email"
             required

@@ -20,22 +20,22 @@
 
             <form wire:submit="save" class="flex flex-col gap-4">
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <flux:input wire:model="name" label="Name" placeholder="z. B. Daily, Backlog Refinement" autofocus />
+                    <flux:input wire:model="form.name" label="Name" placeholder="z. B. Daily, Backlog Refinement" autofocus />
 
-                    <flux:select wire:model="icon" label="Icon">
+                    <flux:select wire:model="form.icon" label="Icon">
                         @foreach ($iconOptions as $value => $label)
                             <option value="{{ $value }}">{{ $label }}</option>
                         @endforeach
                     </flux:select>
                 </div>
 
-                <flux:textarea wire:model="defaultAgenda" label="Standard-Agenda" rows="5" placeholder="Eine Zeile pro Punkt" />
+                <flux:textarea wire:model="form.defaultAgenda" label="Standard-Agenda" rows="5" placeholder="Eine Zeile pro Punkt" />
 
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <flux:input wire:model="defaultDurationMinutes" type="number" min="1" max="600" label="Standarddauer (Minuten)" />
+                    <flux:input wire:model="form.defaultDurationMinutes" type="number" min="1" max="600" label="Standarddauer (Minuten)" />
 
-                    @if (! $isRecurring)
-                        <flux:select wire:model="timing" label="Zeitpunkt im Sprint">
+                    @if (! $form->isRecurring)
+                        <flux:select wire:model="form.timing" label="Zeitpunkt im Sprint">
                             <option value="start">Am Sprint-Start</option>
                             <option value="end">Am Sprint-Ende</option>
                         </flux:select>
@@ -43,14 +43,14 @@
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <flux:checkbox wire:model="isRecurring" label="Wiederkehrend (z. B. mehrmals pro Sprint, wie ein Daily)" />
+                    <flux:checkbox wire:model="form.isRecurring" label="Wiederkehrend (z. B. mehrmals pro Sprint, wie ein Daily)" />
                     <flux:text class="text-sm text-zinc-500 dark:text-zinc-400">
                         Nicht wiederkehrende Events werden beim Anlegen eines Sprints automatisch einmal erzeugt.
                         Wiederkehrende Events fügst du im Sprint bei Bedarf selbst hinzu.
                     </flux:text>
                 </div>
 
-                <flux:checkbox wire:model="trackSpeakingTime" label="Redezeit pro Teammitglied erfassen" />
+                <flux:checkbox wire:model="form.trackSpeakingTime" label="Redezeit pro Teammitglied erfassen" />
 
                 <div class="flex gap-2">
                     <flux:button type="submit" variant="primary">{{ $editingId ? 'Speichern' : 'Anlegen' }}</flux:button>

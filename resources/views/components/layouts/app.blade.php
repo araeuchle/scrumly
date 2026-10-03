@@ -11,15 +11,42 @@
             <x-app-logo />
         </a>
 
+        @php
+            $currentTeam = auth()->user()?->resolveCurrentTeam();
+        @endphp
+
+        @if ($currentTeam)
+            <div class="mt-4">
+                <livewire:teams.switcher :key="'team-switcher-'.$currentTeam->id" />
+            </div>
+        @endif
+
         <flux:navlist variant="outline" class="mt-4">
             <flux:navlist.group heading="Übersicht">
                 <flux:navlist.item icon="squares-2x2" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                     Dashboard
                 </flux:navlist.item>
-                <flux:navlist.item icon="user-group" :href="route('teams.index')" :current="request()->routeIs('teams.*', 'sprints.*', 'sprint-events.*')" wire:navigate>
-                    Teams &amp; Sprints
+                <flux:navlist.item icon="user-group" :href="route('teams.index')" :current="request()->routeIs('teams.index')" wire:navigate>
+                    Teams
                 </flux:navlist.item>
             </flux:navlist.group>
+
+            @if ($currentTeam)
+                <flux:navlist.group heading="{{ $currentTeam->name }}" class="mt-6">
+                    <flux:navlist.item icon="users" :href="route('teams.members', $currentTeam)" :current="request()->routeIs('teams.members')" wire:navigate>
+                        Mitglieder
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="calendar-days" :href="route('sprints.index', $currentTeam)" :current="request()->routeIs('sprints.*', 'sprint-events.*')" wire:navigate>
+                        Sprints
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="adjustments-horizontal" :href="route('teams.event-types', $currentTeam)" :current="request()->routeIs('teams.event-types')" wire:navigate>
+                        Event-Typen
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="exclamation-triangle" :href="route('teams.impediments', $currentTeam)" :current="request()->routeIs('teams.impediments')" wire:navigate>
+                        Impediments
+                    </flux:navlist.item>
+                </flux:navlist.group>
+            @endif
         </flux:navlist>
 
         <flux:spacer />

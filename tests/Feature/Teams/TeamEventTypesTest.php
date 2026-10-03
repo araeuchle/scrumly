@@ -9,12 +9,12 @@ test('the owner can add an event type', function () {
 
     Livewire::actingAs($owner)
         ->test(EventTypes::class, ['team' => $team])
-        ->set('name', 'Daily')
-        ->set('icon', 'sun')
-        ->set('defaultDurationMinutes', 15)
-        ->set('defaultAgenda', 'Sync up')
-        ->set('isRecurring', true)
-        ->set('trackSpeakingTime', true)
+        ->set('form.name', 'Daily')
+        ->set('form.icon', 'sun')
+        ->set('form.defaultDurationMinutes', 15)
+        ->set('form.defaultAgenda', 'Sync up')
+        ->set('form.isRecurring', true)
+        ->set('form.trackSpeakingTime', true)
         ->call('save')
         ->assertHasNoErrors();
 
@@ -31,9 +31,9 @@ test('a name is required to add an event type', function () {
 
     Livewire::actingAs($owner)
         ->test(EventTypes::class, ['team' => $team])
-        ->set('name', '')
+        ->set('form.name', '')
         ->call('save')
-        ->assertHasErrors('name');
+        ->assertHasErrors('form.name');
 
     expect($team->fresh()->eventTypes)->toBeEmpty();
 });
@@ -48,8 +48,8 @@ test('the owner can edit an existing event type', function () {
     Livewire::actingAs($owner)
         ->test(EventTypes::class, ['team' => $team])
         ->call('startEditing', $eventType->id)
-        ->set('name', 'Sprint Planning')
-        ->set('defaultDurationMinutes', 120)
+        ->set('form.name', 'Sprint Planning')
+        ->set('form.defaultDurationMinutes', 120)
         ->call('save')
         ->assertHasNoErrors();
 

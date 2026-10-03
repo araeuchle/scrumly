@@ -14,13 +14,14 @@ test('authenticated users can create a team and become its owner', function () {
 
     Livewire::actingAs($user)
         ->test(Index::class)
-        ->set('name', 'Team Phoenix')
+        ->set('form.name', 'Team Phoenix')
         ->call('createTeam');
 
     $team = Team::where('name', 'Team Phoenix')->first();
 
     expect($team)->not->toBeNull();
     expect($team->isOwnedBy($user))->toBeTrue();
+    expect($user->fresh()->current_team_id)->toBe($team->id);
 });
 
 test('the team list only shows teams the user owns', function () {
@@ -32,4 +33,26 @@ test('the team list only shows teams the user owns', function () {
     expect($component->viewData('teams')->pluck('id'))
         ->toContain($ownTeam->id)
         ->not->toContain($otherTeam->id);
+});
+
+test('selecting a team from the list makes it the current team and redirects', function () {
+    [$firstTeam, $user] = createTeamForOwner();
+    $secondTeam = Team::factory()->for($user, 'owner')->create();
+
+    Livewire::actingAs($user)
+        ->test(Index::class)
+        ->call('selectTeam', $secondTeam->id)
+        ->assertRedirect(route('sprints.index', $secondTeam));
+
+    expect($user->fresh()->current_team_id)->toBe($secondTeam->id);
+});
+
+test('a user cannot select a team they do not own from the list', function () {
+    [, $user] = createTeamForOwner();
+    $otherTeam = Team::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test(Index::class)
+        ->call('selectTeam', $otherTeam->id)
+        ->assertStatus(404);
 });

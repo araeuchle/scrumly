@@ -5,6 +5,7 @@ use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Dashboard;
+use App\Livewire\Impediments\Index as ImpedimentIndex;
 use App\Livewire\SprintEvents\Show as SprintEventShow;
 use App\Livewire\Sprints\Create as SprintCreate;
 use App\Livewire\Sprints\Index as SprintIndex;
@@ -32,6 +33,7 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/teams', TeamIndex::class)->name('teams.index');
     Route::get('/teams/{team}/members', TeamMembers::class)->name('teams.members');
     Route::get('/teams/{team}/event-types', TeamEventTypes::class)->name('teams.event-types');
+    Route::get('/teams/{team}/impediments', ImpedimentIndex::class)->name('teams.impediments');
     Route::get('/teams/{team}/sprints', SprintIndex::class)->name('sprints.index');
     Route::get('/teams/{team}/sprints/create', SprintCreate::class)->name('sprints.create');
     Route::get('/sprints/{sprint}', SprintShow::class)->name('sprints.show');

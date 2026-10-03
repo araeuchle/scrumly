@@ -10,7 +10,7 @@
 
     <form wire:submit="login" class="flex flex-col gap-6">
         <flux:input
-            wire:model="email"
+            wire:model="form.email"
             label="E-Mail-Adresse"
             type="email"
             required
@@ -21,7 +21,7 @@
 
         <div class="flex flex-col gap-2">
             <flux:input
-                wire:model="password"
+                wire:model="form.password"
                 label="Passwort"
                 type="password"
                 required
@@ -37,7 +37,7 @@
             @endif
         </div>
 
-        <flux:checkbox wire:model="remember" label="Angemeldet bleiben" />
+        <flux:checkbox wire:model="form.remember" label="Angemeldet bleiben" />
 
         <flux:button variant="primary" type="submit" class="w-full">Anmelden</flux:button>
     </form>

@@ -9,9 +9,9 @@ test('a team owner can add a team member entry', function () {
 
     Livewire::actingAs($owner)
         ->test(Members::class, ['team' => $team])
-        ->set('firstName', 'Ada')
-        ->set('lastName', 'Lovelace')
-        ->set('defaultCapacityPercent', 80)
+        ->set('form.firstName', 'Ada')
+        ->set('form.lastName', 'Lovelace')
+        ->set('form.defaultCapacityPercent', 80)
         ->call('addMember')
         ->assertHasNoErrors();
 
@@ -27,10 +27,10 @@ test('first and last name are required to add a member', function () {
 
     Livewire::actingAs($owner)
         ->test(Members::class, ['team' => $team])
-        ->set('firstName', '')
-        ->set('lastName', '')
+        ->set('form.firstName', '')
+        ->set('form.lastName', '')
         ->call('addMember')
-        ->assertHasErrors(['firstName', 'lastName']);
+        ->assertHasErrors(['form.firstName', 'form.lastName']);
 
     expect($team->fresh()->teamMembers)->toBeEmpty();
 });

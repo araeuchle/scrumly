@@ -6,7 +6,7 @@
 
     <form wire:submit="resetPassword" class="flex flex-col gap-6">
         <flux:input
-            wire:model="email"
+            wire:model="form.email"
             label="E-Mail-Adresse"
             type="email"
             required
@@ -16,7 +16,7 @@
         />
 
         <flux:input
-            wire:model="password"
+            wire:model="form.password"
             label="Neues Passwort"
             type="password"
             required
@@ -26,7 +26,7 @@
         />
 
         <flux:input
-            wire:model="password_confirmation"
+            wire:model="form.password_confirmation"
             label="Passwort bestätigen"
             type="password"
             required

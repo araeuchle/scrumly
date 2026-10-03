@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Teams;
 
+use App\Livewire\Forms\TeamEventTypeForm;
 use App\Models\Team;
 use App\Models\TeamEventType;
 use Illuminate\Contracts\View\View;
@@ -11,38 +12,13 @@ use Livewire\Component;
 #[Layout('components.layouts.app')]
 class EventTypes extends Component
 {
-    public const ICONS = [
-        'calendar-days' => 'Kalender',
-        'sun' => 'Sonne',
-        'clipboard-document-list' => 'Checkliste',
-        'presentation-chart-line' => 'Präsentation',
-        'arrow-path' => 'Kreislauf',
-        'chat-bubble-left-right' => 'Sprechblasen',
-        'light-bulb' => 'Glühbirne',
-        'user-group' => 'Gruppe',
-        'clock' => 'Uhr',
-        'flag' => 'Flagge',
-    ];
-
     public Team $team;
 
     public bool $showForm = false;
 
     public ?int $editingId = null;
 
-    public string $name = '';
-
-    public string $icon = 'calendar-days';
-
-    public int $defaultDurationMinutes = 30;
-
-    public string $defaultAgenda = '';
-
-    public bool $isRecurring = false;
-
-    public string $timing = 'start';
-
-    public bool $trackSpeakingTime = false;
+    public TeamEventTypeForm $form;
 
     public function mount(Team $team): void
     {
@@ -53,7 +29,8 @@ class EventTypes extends Component
 
     public function startCreating(): void
     {
-        $this->resetForm();
+        $this->form->reset();
+        $this->editingId = null;
         $this->showForm = true;
     }
 
@@ -62,19 +39,20 @@ class EventTypes extends Component
         $eventType = $this->team->eventTypes()->findOrFail($teamEventTypeId);
 
         $this->editingId = $eventType->id;
-        $this->name = $eventType->name;
-        $this->icon = $eventType->icon;
-        $this->defaultDurationMinutes = $eventType->default_duration_minutes;
-        $this->defaultAgenda = (string) $eventType->default_agenda;
-        $this->isRecurring = $eventType->is_recurring;
-        $this->timing = $eventType->timing;
-        $this->trackSpeakingTime = $eventType->track_speaking_time;
+        $this->form->name = $eventType->name;
+        $this->form->icon = $eventType->icon;
+        $this->form->defaultDurationMinutes = $eventType->default_duration_minutes;
+        $this->form->defaultAgenda = (string) $eventType->default_agenda;
+        $this->form->isRecurring = $eventType->is_recurring;
+        $this->form->timing = $eventType->timing;
+        $this->form->trackSpeakingTime = $eventType->track_speaking_time;
         $this->showForm = true;
     }
 
     public function cancelForm(): void
     {
-        $this->resetForm();
+        $this->form->reset();
+        $this->editingId = null;
         $this->showForm = false;
     }
 
@@ -82,15 +60,7 @@ class EventTypes extends Component
     {
         $this->authorize('update', $this->team);
 
-        $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'icon' => ['required', 'string', 'in:'.implode(',', array_keys(self::ICONS))],
-            'defaultDurationMinutes' => ['required', 'integer', 'min:1', 'max:600'],
-            'defaultAgenda' => ['nullable', 'string', 'max:4000'],
-            'isRecurring' => ['boolean'],
-            'timing' => ['required', 'in:start,end'],
-            'trackSpeakingTime' => ['boolean'],
-        ]);
+        $validated = $this->form->validate();
 
         $data = [
             'name' => $validated['name'],
@@ -110,7 +80,8 @@ class EventTypes extends Component
             $this->team->eventTypes()->create($data);
         }
 
-        $this->resetForm();
+        $this->form->reset();
+        $this->editingId = null;
         $this->showForm = false;
     }
 
@@ -160,19 +131,11 @@ class EventTypes extends Component
         $swapWith->update(['sort_order' => $currentOrder]);
     }
 
-    private function resetForm(): void
-    {
-        $this->reset(['editingId', 'name', 'icon', 'defaultDurationMinutes', 'defaultAgenda', 'isRecurring', 'timing', 'trackSpeakingTime']);
-        $this->icon = 'calendar-days';
-        $this->defaultDurationMinutes = 30;
-        $this->timing = 'start';
-    }
-
     public function render(): View
     {
         return view('livewire.teams.event-types', [
             'eventTypes' => $this->team->eventTypes()->get(),
-            'iconOptions' => self::ICONS,
+            'iconOptions' => TeamEventTypeForm::ICONS,
         ]);
     }
 }

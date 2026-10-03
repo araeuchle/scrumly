@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Auth;
 
+use App\Livewire\Forms\ForgotPasswordForm;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
@@ -11,25 +12,23 @@ use Livewire\Component;
 #[Layout('components.layouts.guest')]
 class ForgotPassword extends Component
 {
-    public string $email = '';
+    public ForgotPasswordForm $form;
 
     public ?string $status = null;
 
     public function sendResetLink(): void
     {
-        $this->validate([
-            'email' => ['required', 'string', 'email'],
-        ]);
+        $this->form->validate();
 
-        $status = Password::sendResetLink(['email' => $this->email]);
+        $status = Password::sendResetLink(['email' => $this->form->email]);
 
         if ($status !== Password::RESET_LINK_SENT) {
             throw ValidationException::withMessages([
-                'email' => __($status),
+                'form.email' => __($status),
             ]);
         }
 
-        $this->reset('email');
+        $this->form->reset('email');
         $this->status = __($status);
     }
 

@@ -6,10 +6,10 @@ use Livewire\Livewire;
 
 test('new users can register and are logged in automatically', function () {
     Livewire::test(Register::class)
-        ->set('name', 'Jane Doe')
-        ->set('email', 'jane@example.com')
-        ->set('password', 'password123')
-        ->set('password_confirmation', 'password123')
+        ->set('form.name', 'Jane Doe')
+        ->set('form.email', 'jane@example.com')
+        ->set('form.password', 'password123')
+        ->set('form.password_confirmation', 'password123')
         ->call('register')
         ->assertRedirect(route('dashboard'));
 
@@ -25,22 +25,22 @@ test('registration requires a unique email', function () {
     User::factory()->create(['email' => 'taken@example.com']);
 
     Livewire::test(Register::class)
-        ->set('name', 'Jane Doe')
-        ->set('email', 'taken@example.com')
-        ->set('password', 'password123')
-        ->set('password_confirmation', 'password123')
+        ->set('form.name', 'Jane Doe')
+        ->set('form.email', 'taken@example.com')
+        ->set('form.password', 'password123')
+        ->set('form.password_confirmation', 'password123')
         ->call('register')
-        ->assertHasErrors('email');
+        ->assertHasErrors('form.email');
 });
 
 test('registration requires a matching password confirmation', function () {
     Livewire::test(Register::class)
-        ->set('name', 'Jane Doe')
-        ->set('email', 'jane@example.com')
-        ->set('password', 'password123')
-        ->set('password_confirmation', 'different')
+        ->set('form.name', 'Jane Doe')
+        ->set('form.email', 'jane@example.com')
+        ->set('form.password', 'password123')
+        ->set('form.password_confirmation', 'different')
         ->call('register')
-        ->assertHasErrors('password');
+        ->assertHasErrors('form.password');
 
     $this->assertGuest();
 });

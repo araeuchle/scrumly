@@ -54,4 +54,12 @@ class Sprint extends Model
     {
         return $this->hasMany(SprintCapacity::class);
     }
+
+    /**
+     * @return HasMany<Impediment, $this>
+     */
+    public function impediments(): HasMany
+    {
+        return $this->hasMany(Impediment::class);
+    }
 }

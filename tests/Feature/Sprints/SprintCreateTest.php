@@ -24,10 +24,10 @@ test('the owner can create a sprint with auto-seeded capacities and non-recurrin
 
     Livewire::actingAs($owner)
         ->test(Create::class, ['team' => $team])
-        ->set('name', 'Sprint 1')
-        ->set('goal', 'Ship the MVP')
-        ->set('startsAt', '2026-01-01')
-        ->set('endsAt', '2026-01-14')
+        ->set('form.name', 'Sprint 1')
+        ->set('form.goal', 'Ship the MVP')
+        ->set('form.startsAt', '2026-01-01')
+        ->set('form.endsAt', '2026-01-14')
         ->call('save')
         ->assertHasNoErrors();
 
@@ -56,11 +56,11 @@ test('the sprint end date must be after or equal to the start date', function ()
 
     Livewire::actingAs($owner)
         ->test(Create::class, ['team' => $team])
-        ->set('name', 'Sprint 1')
-        ->set('startsAt', '2026-01-14')
-        ->set('endsAt', '2026-01-01')
+        ->set('form.name', 'Sprint 1')
+        ->set('form.startsAt', '2026-01-14')
+        ->set('form.endsAt', '2026-01-01')
         ->call('save')
-        ->assertHasErrors('endsAt');
+        ->assertHasErrors('form.endsAt');
 });
 
 test('a user who does not own the team cannot create a sprint', function () {

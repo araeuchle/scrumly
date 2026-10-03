@@ -47,6 +47,14 @@ class Team extends Model
         return $this->hasMany(TeamEventType::class)->orderBy('sort_order');
     }
 
+    /**
+     * @return HasMany<Impediment, $this>
+     */
+    public function impediments(): HasMany
+    {
+        return $this->hasMany(Impediment::class);
+    }
+
     public function isOwnedBy(User $user): bool
     {
         return $this->user_id === $user->id;
