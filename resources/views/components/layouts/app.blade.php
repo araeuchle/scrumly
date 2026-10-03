@@ -16,6 +16,9 @@
                 <flux:navlist.item icon="squares-2x2" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                     Dashboard
                 </flux:navlist.item>
+                <flux:navlist.item icon="user-group" :href="route('teams.index')" :current="request()->routeIs('teams.*', 'sprints.*', 'sprint-events.*')" wire:navigate>
+                    Teams &amp; Sprints
+                </flux:navlist.item>
             </flux:navlist.group>
         </flux:navlist>
 
