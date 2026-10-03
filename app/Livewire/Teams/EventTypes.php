@@ -105,7 +105,8 @@ class EventTypes extends Component
         if ($this->editingId !== null) {
             $this->team->eventTypes()->whereKey($this->editingId)->update($data);
         } else {
-            $data['sort_order'] = ((int) $this->team->eventTypes()->max('sort_order')) + 1;
+            $maxSortOrder = $this->team->eventTypes()->max('sort_order');
+            $data['sort_order'] = (is_numeric($maxSortOrder) ? (int) $maxSortOrder : 0) + 1;
             $this->team->eventTypes()->create($data);
         }
 
@@ -149,6 +150,10 @@ class EventTypes extends Component
 
         $current = $eventTypes->get($index);
         $swapWith = $eventTypes->get($swapIndex);
+
+        if (! $current instanceof TeamEventType || ! $swapWith instanceof TeamEventType) {
+            return;
+        }
 
         $currentOrder = $current->sort_order;
         $current->update(['sort_order' => $swapWith->sort_order]);

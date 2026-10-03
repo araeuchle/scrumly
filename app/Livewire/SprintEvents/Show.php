@@ -17,12 +17,15 @@ class Show extends Component
 
     public string $agenda = '';
 
+    public string $notes = '';
+
     public function mount(SprintEvent $sprintEvent): void
     {
         $this->authorize('view', $sprintEvent);
 
         $this->sprintEvent = $sprintEvent;
         $this->agenda = (string) $sprintEvent->agenda;
+        $this->notes = (string) $sprintEvent->notes;
     }
 
     public function updatedAgenda(string $value): void
@@ -30,6 +33,13 @@ class Show extends Component
         $this->authorize('update', $this->sprintEvent);
 
         $this->sprintEvent->update(['agenda' => $value]);
+    }
+
+    public function updatedNotes(string $value): void
+    {
+        $this->authorize('update', $this->sprintEvent);
+
+        $this->sprintEvent->update(['notes' => $value]);
     }
 
     public function start(): void

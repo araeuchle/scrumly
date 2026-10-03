@@ -3,7 +3,9 @@
 namespace App\Livewire\Teams;
 
 use App\Models\Team;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -22,15 +24,26 @@ class Index extends Component
             'name' => ['required', 'string', 'max:255'],
         ]);
 
-        $team = auth()->user()->teams()->create($validated);
+        $team = $this->currentUser()->teams()->create($validated);
 
         $this->redirectRoute('sprints.index', $team, navigate: true);
     }
 
     public function render(): View
     {
-        $teams = auth()->user()->teams()->withCount('sprints')->get();
+        $teams = $this->currentUser()->teams()->withCount('sprints')->get();
 
         return view('livewire.teams.index', ['teams' => $teams]);
+    }
+
+    private function currentUser(): User
+    {
+        $user = Auth::user();
+
+        if (! $user instanceof User) {
+            abort(403);
+        }
+
+        return $user;
     }
 }

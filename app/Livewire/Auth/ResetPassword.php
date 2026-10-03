@@ -52,9 +52,9 @@ class ResetPassword extends Component
             }
         );
 
-        if ($status !== Password::PASSWORD_RESET) {
+        if (! is_string($status) || $status !== Password::PASSWORD_RESET) {
             throw ValidationException::withMessages([
-                'email' => __($status),
+                'email' => is_string($status) ? __($status) : __('passwords.throttled'),
             ]);
         }
 

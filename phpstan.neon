@@ -1,0 +1,12 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+
+    level: 9
+
+    checkOctaneCompatibility: true
+    checkModelProperties: true
+    parseModelCastsMethod: true

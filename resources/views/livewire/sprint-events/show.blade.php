@@ -26,20 +26,29 @@
         <div class="flex flex-col gap-6 lg:col-span-2">
             <flux:card class="flex flex-col items-center gap-4 py-10 text-center">
                 @php
+                    $isCompleted = $sprintEvent->status->value === 'completed';
                     $remaining = $sprintEvent->remainingSeconds();
                     $overtime = $remaining < 0;
-                    $display = abs($remaining);
+                    $display = $isCompleted ? ($sprintEvent->duration_minutes * 60) - $remaining : abs($remaining);
                     $minutes = intdiv($display, 60);
                     $seconds = $display % 60;
                 @endphp
 
                 <flux:text class="text-sm text-zinc-500 uppercase tracking-wide dark:text-zinc-400">
-                    {{ $overtime ? 'Überzogen um' : 'Verbleibend' }}
+                    @if ($isCompleted)
+                        Tatsächliche Dauer
+                    @else
+                        {{ $overtime ? 'Überzogen um' : 'Verbleibend' }}
+                    @endif
                 </flux:text>
 
                 <flux:heading size="xl" class="text-6xl font-bold tabular-nums {{ $overtime ? 'text-red-500' : '' }}">
-                    {{ $overtime ? '+' : '' }}{{ sprintf('%02d:%02d', $minutes, $seconds) }}
+                    {{ (! $isCompleted && $overtime) ? '+' : '' }}{{ sprintf('%02d:%02d', $minutes, $seconds) }}
                 </flux:heading>
+
+                @if ($isCompleted && $overtime)
+                    <flux:badge size="sm" color="red">{{ abs($remaining) >= 60 ? intdiv(abs($remaining), 60).' Min.' : abs($remaining).' Sek.' }} über geplanter Zeit</flux:badge>
+                @endif
 
                 @can('update', $sprintEvent)
                     <div class="flex gap-2">
@@ -93,14 +102,26 @@
             @endif
         </div>
 
-        <div class="flex flex-col gap-4">
-            <flux:heading size="lg">Agenda</flux:heading>
+        <div class="flex flex-col gap-6">
+            <flux:card class="flex flex-col gap-4">
+                <flux:heading size="lg">Agenda</flux:heading>
 
-            @can('update', $sprintEvent)
-                <flux:textarea wire:model.blur="agenda" rows="10" />
-            @else
-                <flux:card class="whitespace-pre-line">{{ $sprintEvent->agenda }}</flux:card>
-            @endcan
+                @can('update', $sprintEvent)
+                    <flux:textarea wire:model.live.debounce.750ms="agenda" rows="8" />
+                @else
+                    <flux:text class="whitespace-pre-line">{{ $sprintEvent->agenda }}</flux:text>
+                @endcan
+            </flux:card>
+
+            <flux:card class="flex flex-col gap-4">
+                <flux:heading size="lg">Notizen</flux:heading>
+
+                @can('update', $sprintEvent)
+                    <flux:textarea wire:model.live.debounce.750ms="notes" rows="6" placeholder="Was ist während des Events passiert? Blocker, Entscheidungen, Ergebnisse …" />
+                @else
+                    <flux:text class="whitespace-pre-line">{{ $sprintEvent->notes }}</flux:text>
+                @endcan
+            </flux:card>
         </div>
     </div>
 </div>

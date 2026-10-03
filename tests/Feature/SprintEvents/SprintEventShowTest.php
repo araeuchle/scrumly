@@ -80,6 +80,18 @@ test('editing the agenda persists the change', function () {
     expect($event->fresh()->agenda)->toBe('Updated agenda text');
 });
 
+test('editing the notes persists the change', function () {
+    [$team, $owner] = createTeamForOwner();
+    $sprint = Sprint::factory()->for($team)->create();
+    $event = SprintEvent::factory()->for($sprint)->create();
+
+    Livewire::actingAs($owner)
+        ->test(Show::class, ['sprintEvent' => $event])
+        ->set('notes', 'Blocker: API war down');
+
+    expect($event->fresh()->notes)->toBe('Blocker: API war down');
+});
+
 test('a user who does not own the team cannot start or edit an event', function () {
     [$team] = createTeamForOwner();
     $sprint = Sprint::factory()->for($team)->create();

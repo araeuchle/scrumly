@@ -67,10 +67,20 @@ Vite on `5183`. Adjust there if needed, not in `compose.yaml`.
   belongs to a `TeamEventType` (`team_event_type_id`, cascades on delete) instead of carrying a
   `type` string/enum. Creating a sprint (`Sprints/Create.php`) auto-seeds one `SprintEvent` per
   non-recurring (`is_recurring = false`) event type, scheduled on the sprint's start or end date
-  per that type's `timing`; recurring types (e.g. a team's "Daily") are instead added on demand
-  from the sprint page via `Sprints/Show::addRecurringOccurrence()`, which is idempotent per day.
-  Whether the Daily-style speaking-time tracker shows on an event's page is driven by that event
-  type's `track_speaking_time` flag, not by any hardcoded "daily" check.
+  per that type's `timing`; any event type (recurring or not) can also be added on demand from the
+  sprint page via a dialog calling `Sprints/Show::addEventOccurrence()`, which is idempotent per
+  day. Whether the Daily-style speaking-time tracker shows on an event's page is driven by that
+  event type's `track_speaking_time` flag, not by any hardcoded "daily" check. `SprintEvent` also
+  has a free-text `notes` column (distinct from `agenda`) for what actually happened, and
+  `remainingSeconds()` freezes its calculation at `ended_at` once an event is completed — it must
+  never keep computing against `now()` for a finished event, or the UI reports a growing overtime
+  forever.
+- **`wire:model.blur` does not fire its request in this Livewire 4 + Flux setup** — confirmed by
+  direct testing: the browser-side state updates, a real `blur` event fires, but no network
+  request is ever sent (verified via the container's access log, not just dev tools). Use
+  `wire:model.live.debounce.750ms` (or similar) instead for anything that needs to persist as the
+  user types without an explicit save button, as done in `SprintEvents/Show`'s agenda and notes
+  fields. Don't reach for `.blur` again without re-verifying it against a real browser first.
 
 ## Testing
 
@@ -92,3 +102,18 @@ call `$this->authorize()` and are expected to fail: the **initial mount/render**
 `expect(fn () => ...)->toThrow(...)` both work there) — but a **subsequent `->call()`** on an
 already-mounted component goes through normal exception handling and converts the same exception
 into a 403 response instead, so assert it with `->call(...)->assertForbidden()`, not `toThrow()`.
+
+## Static analysis
+
+Larastan (`phpstan.neon`) runs at **level 9** via `make run-phpstan`. Two non-default parameters
+matter for this codebase: `checkModelProperties: true` makes Larastan trust the DB schema for
+column nullability (and nullable `BelongsTo`/`HasOne` magic-property access must be fixed with a
+`@property-read` docblock on the model when the foreign key is actually `NOT NULL` — Larastan
+otherwise always treats relation properties as nullable, since it can't prove a relation is loaded).
+`parseModelCastsMethod: true` is required because models here declare casts via the Laravel 11+
+`protected function casts(): array` method rather than the legacy `protected $casts` array —
+without this flag Larastan ignores the method entirely and infers raw column types (e.g. a
+`datetime`-cast column shows up as `Carbon|string`, enum casts don't narrow at all), producing
+spurious errors. At level 9, `checkExplicitMixed` is on, so anything the framework itself types as
+`@return mixed` (e.g. `Builder::max()`, `Password::reset()`) can no longer be blindly cast — narrow
+it first with `is_numeric()`/`is_string()`/etc. before casting or comparing.

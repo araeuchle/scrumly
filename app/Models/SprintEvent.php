@@ -10,7 +10,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['sprint_id', 'team_event_type_id', 'scheduled_date', 'duration_minutes', 'agenda', 'status', 'started_at', 'ended_at'])]
+/**
+ * @property-read Sprint $sprint
+ * @property-read TeamEventType $teamEventType
+ */
+#[Fillable(['sprint_id', 'team_event_type_id', 'scheduled_date', 'duration_minutes', 'agenda', 'notes', 'status', 'started_at', 'ended_at'])]
 class SprintEvent extends Model
 {
     /** @use HasFactory<SprintEventFactory> */
@@ -59,7 +63,8 @@ class SprintEvent extends Model
             return $this->duration_minutes * 60;
         }
 
-        $elapsed = now()->getTimestamp() - $this->started_at->getTimestamp();
+        $reference = $this->ended_at ?? now();
+        $elapsed = $reference->getTimestamp() - $this->started_at->getTimestamp();
 
         return ($this->duration_minutes * 60) - $elapsed;
     }
