@@ -59,11 +59,11 @@ class SprintEvent extends Model
     }
 
     /**
-     * @return HasMany<RetroActionItem, $this>
+     * @return HasMany<ActionItem, $this>
      */
-    public function retroActionItems(): HasMany
+    public function actionItems(): HasMany
     {
-        return $this->hasMany(RetroActionItem::class);
+        return $this->hasMany(ActionItem::class);
     }
 
     public function remainingSeconds(): int

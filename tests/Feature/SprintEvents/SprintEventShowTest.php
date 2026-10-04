@@ -159,7 +159,7 @@ test('the owner can add a retro action item that belongs to the team', function 
         ->call('addActionItem')
         ->assertHasNoErrors();
 
-    $actionItem = $team->fresh()->retroActionItems->first();
+    $actionItem = $team->fresh()->actionItems->first();
 
     expect($actionItem)->not->toBeNull();
     expect($actionItem->description)->toBe('CI-Pipeline beschleunigen');
@@ -179,7 +179,7 @@ test('a description is required to add a retro action item', function () {
         ->call('addActionItem')
         ->assertHasErrors('actionItemForm.description');
 
-    expect($team->fresh()->retroActionItems)->toBeEmpty();
+    expect($team->fresh()->actionItems)->toBeEmpty();
 });
 
 test('the owner can complete, reopen and delete a retro action item', function () {
@@ -187,7 +187,7 @@ test('the owner can complete, reopen and delete a retro action item', function (
     $sprint = Sprint::factory()->for($team)->create();
     $retroType = TeamEventType::factory()->for($team)->retrospective()->create();
     $event = SprintEvent::factory()->for($sprint)->for($retroType, 'teamEventType')->create();
-    $actionItem = $team->retroActionItems()->create(['description' => 'Pairing etablieren', 'sprint_event_id' => $event->id]);
+    $actionItem = $team->actionItems()->create(['description' => 'Pairing etablieren', 'sprint_event_id' => $event->id]);
 
     $component = Livewire::actingAs($owner)->test(Show::class, ['sprintEvent' => $event]);
 
@@ -199,7 +199,7 @@ test('the owner can complete, reopen and delete a retro action item', function (
     expect($actionItem->fresh()->is_done)->toBeFalse();
 
     $component->call('deleteActionItem', $actionItem->id);
-    expect($team->fresh()->retroActionItems)->toBeEmpty();
+    expect($team->fresh()->actionItems)->toBeEmpty();
 });
 
 test('open action items from an earlier retro still appear on a later retro of a new sprint', function () {
@@ -208,7 +208,7 @@ test('open action items from an earlier retro still appear on a later retro of a
 
     $firstSprint = Sprint::factory()->for($team)->create();
     $firstRetro = SprintEvent::factory()->for($firstSprint, 'sprint')->for($retroType, 'teamEventType')->create();
-    $team->retroActionItems()->create(['description' => 'Deploy-Prozess dokumentieren', 'sprint_event_id' => $firstRetro->id]);
+    $team->actionItems()->create(['description' => 'Deploy-Prozess dokumentieren', 'sprint_event_id' => $firstRetro->id]);
 
     $secondSprint = Sprint::factory()->for($team)->create();
     $secondRetro = SprintEvent::factory()->for($secondSprint, 'sprint')->for($retroType, 'teamEventType')->create();
@@ -223,7 +223,7 @@ test('a user who does not own the team cannot manage retro action items', functi
     $sprint = Sprint::factory()->for($team)->create();
     $retroType = TeamEventType::factory()->for($team)->retrospective()->create();
     $event = SprintEvent::factory()->for($sprint)->for($retroType, 'teamEventType')->create();
-    $actionItem = $team->retroActionItems()->create(['description' => 'Pairing etablieren', 'sprint_event_id' => $event->id]);
+    $actionItem = $team->actionItems()->create(['description' => 'Pairing etablieren', 'sprint_event_id' => $event->id]);
     $outsider = User::factory()->create();
 
     $this->actingAs($outsider)

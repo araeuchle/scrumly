@@ -39,7 +39,9 @@
                 <flux:table.rows>
                     @foreach ($teamMembers as $member)
                         <flux:table.row wire:key="member-{{ $member->id }}">
-                            <flux:table.cell>{{ $member->fullName() }}</flux:table.cell>
+                            <flux:table.cell>
+                                <flux:link :href="route('team-members.show', $member)" wire:navigate>{{ $member->fullName() }}</flux:link>
+                            </flux:table.cell>
                             <flux:table.cell>
                                 <div class="flex items-center gap-2">
                                     <flux:input

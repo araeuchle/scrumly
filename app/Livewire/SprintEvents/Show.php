@@ -3,12 +3,14 @@
 namespace App\Livewire\SprintEvents;
 
 use App\Enums\SprintEventStatus;
-use App\Livewire\Forms\RetroActionItemForm;
+use App\Livewire\Forms\ActionItemForm;
+use App\Models\ActionItem;
 use App\Models\DailySpeakingTurn;
-use App\Models\RetroActionItem;
 use App\Models\SprintEvent;
+use App\Models\Team;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -23,7 +25,7 @@ class Show extends Component
 
     public string $boardUrl = '';
 
-    public RetroActionItemForm $actionItemForm;
+    public ActionItemForm $actionItemForm;
 
     public function mount(SprintEvent $sprintEvent): void
     {
@@ -58,11 +60,11 @@ class Show extends Component
 
     public function addActionItem(): void
     {
-        $this->authorize('create', [RetroActionItem::class, $this->sprintEvent->sprint->team]);
+        $this->authorize('create', [ActionItem::class, $this->sprintEvent->sprint->team]);
 
         $validated = $this->actionItemForm->validate();
 
-        $this->sprintEvent->sprint->team->retroActionItems()->create([
+        $this->sprintEvent->sprint->team->actionItems()->create([
             'sprint_event_id' => $this->sprintEvent->id,
             'description' => $validated['description'],
         ]);
@@ -72,7 +74,7 @@ class Show extends Component
 
     public function completeActionItem(string $actionItemId): void
     {
-        $actionItem = $this->sprintEvent->sprint->team->retroActionItems()->findOrFail($actionItemId);
+        $actionItem = $this->retroActionItemsQuery()->findOrFail($actionItemId);
 
         $this->authorize('update', $actionItem);
 
@@ -81,7 +83,7 @@ class Show extends Component
 
     public function reopenActionItem(string $actionItemId): void
     {
-        $actionItem = $this->sprintEvent->sprint->team->retroActionItems()->findOrFail($actionItemId);
+        $actionItem = $this->retroActionItemsQuery()->findOrFail($actionItemId);
 
         $this->authorize('update', $actionItem);
 
@@ -90,11 +92,19 @@ class Show extends Component
 
     public function deleteActionItem(string $actionItemId): void
     {
-        $actionItem = $this->sprintEvent->sprint->team->retroActionItems()->findOrFail($actionItemId);
+        $actionItem = $this->retroActionItemsQuery()->findOrFail($actionItemId);
 
         $this->authorize('delete', $actionItem);
 
         $actionItem->delete();
+    }
+
+    /**
+     * @return HasMany<ActionItem, Team>
+     */
+    private function retroActionItemsQuery(): HasMany
+    {
+        return $this->sprintEvent->sprint->team->actionItems()->whereNull('one_on_one_id');
     }
 
     public function start(): void
@@ -178,13 +188,13 @@ class Show extends Component
             }
         }
 
-        $retroActionItems = $this->sprintEvent->teamEventType->is_retrospective
-            ? $this->sprintEvent->sprint->team->retroActionItems()->where('is_done', false)->latest()->get()
+        $actionItems = $this->sprintEvent->teamEventType->is_retrospective
+            ? $this->retroActionItemsQuery()->where('is_done', false)->latest()->get()
             : null;
 
         return view('livewire.sprint-events.show', [
             'speakingTurns' => $speakingTurns,
-            'retroActionItems' => $retroActionItems,
+            'actionItems' => $actionItems,
         ]);
     }
 }

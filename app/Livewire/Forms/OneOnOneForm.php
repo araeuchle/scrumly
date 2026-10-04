@@ -4,9 +4,11 @@ namespace App\Livewire\Forms;
 
 use Livewire\Form;
 
-class RetroActionItemForm extends Form
+class OneOnOneForm extends Form
 {
-    public string $description = '';
+    public string $heldAt = '';
+
+    public string $notes = '';
 
     /**
      * @return array<string, array<int, string>>
@@ -14,7 +16,8 @@ class RetroActionItemForm extends Form
     public function rules(): array
     {
         return [
-            'description' => ['required', 'string', 'max:2000'],
+            'heldAt' => ['required', 'date'],
+            'notes' => ['nullable', 'string', 'max:4000'],
         ];
     }
 }

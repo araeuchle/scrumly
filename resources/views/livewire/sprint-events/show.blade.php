@@ -100,11 +100,11 @@
                         </form>
                     @endcan
 
-                    @if ($retroActionItems->isEmpty())
+                    @if ($actionItems->isEmpty())
                         <flux:text class="text-zinc-500 dark:text-zinc-400">Keine offenen Action Items.</flux:text>
                     @else
                         <div class="flex flex-col gap-2">
-                            @foreach ($retroActionItems as $actionItem)
+                            @foreach ($actionItems as $actionItem)
                                 <div class="flex items-center justify-between gap-3 rounded-lg border border-zinc-100 p-3 dark:border-zinc-700" wire:key="action-item-{{ $actionItem->id }}">
                                     <flux:text>{{ $actionItem->description }}</flux:text>
 

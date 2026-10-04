@@ -10,6 +10,7 @@ use App\Livewire\SprintEvents\Show as SprintEventShow;
 use App\Livewire\Sprints\Create as SprintCreate;
 use App\Livewire\Sprints\Index as SprintIndex;
 use App\Livewire\Sprints\Show as SprintShow;
+use App\Livewire\TeamMembers\Show as TeamMemberShow;
 use App\Livewire\Teams\EventTypes as TeamEventTypes;
 use App\Livewire\Teams\Index as TeamIndex;
 use App\Livewire\Teams\Members as TeamMembers;
@@ -40,6 +41,7 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/teams/{team}/sprints/create', SprintCreate::class)->name('sprints.create');
     Route::get('/sprints/{sprint}', SprintShow::class)->name('sprints.show');
     Route::get('/sprint-events/{sprintEvent}', SprintEventShow::class)->name('sprint-events.show');
+    Route::get('/team-members/{teamMember}', TeamMemberShow::class)->name('team-members.show');
 
     Route::post('/logout', function (Request $request): RedirectResponse {
         Auth::guard('web')->logout();

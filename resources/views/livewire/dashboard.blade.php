@@ -2,65 +2,73 @@
     <div>
         <flux:heading size="xl">Willkommen zurück, {{ auth()->user()->name }} 👋</flux:heading>
         <flux:text class="mt-1 text-zinc-500 dark:text-zinc-400">
-            Das ist dein Scrumly-Dashboard.
+            Offene Action Items und 1:1-Erinnerungen für deine Teams.
         </flux:text>
     </div>
 
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <a href="{{ route('teams.index') }}" wire:navigate class="block">
-            <flux:card class="flex flex-col gap-3 transition hover:border-zinc-300 dark:hover:border-zinc-600">
-                <flux:icon icon="calendar-days" variant="outline" class="size-8 text-zinc-400" />
-                <flux:heading size="lg">Sprint- & Event-Management</flux:heading>
-                <flux:text class="text-zinc-500 dark:text-zinc-400">
-                    Sprint-Planung, Kapazitäten und automatische Meeting-Agenden.
-                </flux:text>
-                <flux:badge color="lime" size="sm" class="w-fit">Verfügbar</flux:badge>
-            </flux:card>
-        </a>
+    @if ($teams->isEmpty())
+        <flux:card class="flex flex-col items-center gap-3 p-12 text-center">
+            <flux:icon icon="user-group" variant="outline" class="size-10 text-zinc-400" />
+            <flux:heading size="lg">Noch kein Team</flux:heading>
+            <flux:text class="text-zinc-500 dark:text-zinc-400">
+                Leg dein erstes Team an, um loszulegen.
+            </flux:text>
+            <flux:button variant="primary" :href="route('teams.index')" wire:navigate>Zu den Teams</flux:button>
+        </flux:card>
+    @else
+        <div class="flex flex-col gap-6">
+            @foreach ($teams as $team)
+                @php
+                    $reminders = $team->teamMembers->filter(fn ($member) => $member->needsOneOnOneReminder());
+                @endphp
 
-        <a href="{{ route('teams.index') }}" wire:navigate class="block">
-            <flux:card class="flex flex-col gap-3 transition hover:border-zinc-300 dark:hover:border-zinc-600">
-                <flux:icon icon="exclamation-triangle" variant="outline" class="size-8 text-zinc-400" />
-                <flux:heading size="lg">Impediment-Tracker</flux:heading>
-                <flux:text class="text-zinc-500 dark:text-zinc-400">
-                    Blocker zentral erfassen, eskalieren und auflösen.
-                </flux:text>
-                <flux:badge color="lime" size="sm" class="w-fit">Verfügbar</flux:badge>
-            </flux:card>
-        </a>
+                <flux:card class="flex flex-col gap-6">
+                    <flux:heading size="lg">
+                        <flux:link :href="route('sprints.index', $team)" wire:navigate>{{ $team->name }}</flux:link>
+                    </flux:heading>
 
-        <a href="{{ route('teams.index') }}" wire:navigate class="block">
-            <flux:card class="flex flex-col gap-3 transition hover:border-zinc-300 dark:hover:border-zinc-600">
-                <flux:icon icon="chat-bubble-left-right" variant="outline" class="size-8 text-zinc-400" />
-                <flux:heading size="lg">Retrospektiven</flux:heading>
-                <flux:text class="text-zinc-500 dark:text-zinc-400">
-                    Board-Link griffbereit, Action Items gehen nie verloren.
-                </flux:text>
-                <flux:badge color="lime" size="sm" class="w-fit">Verfügbar</flux:badge>
-            </flux:card>
-        </a>
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                        <div class="flex flex-col gap-3">
+                            <flux:heading size="sm">Offene Action Items aus Retros</flux:heading>
 
-        <a href="{{ route('teams.index') }}" wire:navigate class="block">
-            <flux:card class="flex flex-col gap-3 transition hover:border-zinc-300 dark:hover:border-zinc-600">
-                <flux:icon icon="chart-bar" variant="outline" class="size-8 text-zinc-400" />
-                <flux:heading size="lg">Team-Metriken</flux:heading>
-                <flux:text class="text-zinc-500 dark:text-zinc-400">
-                    Event-Overruns, Velocity-Trend und Team Health auf einen Blick.
-                </flux:text>
-                <flux:badge color="lime" size="sm" class="w-fit">Verfügbar</flux:badge>
-            </flux:card>
-        </a>
+                            @if ($team->actionItems->isEmpty())
+                                <flux:text class="text-sm text-zinc-500 dark:text-zinc-400">Keine offenen Action Items.</flux:text>
+                            @else
+                                <div class="flex flex-col gap-2">
+                                    @foreach ($team->actionItems as $actionItem)
+                                        <div class="rounded-lg border border-zinc-100 p-3 text-sm dark:border-zinc-700">
+                                            @if ($actionItem->sprint_event_id)
+                                                <flux:link :href="route('sprint-events.show', $actionItem->sprint_event_id)" wire:navigate>{{ $actionItem->description }}</flux:link>
+                                            @else
+                                                {{ $actionItem->description }}
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
 
-        @foreach ([
-            ['icon' => 'academic-cap', 'title' => 'Coaching-Assistent', 'description' => 'Checklisten und Hinweise für deine Scrum-Events.'],
-            ['icon' => 'user-group', 'title' => 'Mehrere Teams', 'description' => 'Scrum-of-Scrums-Ansicht für mehrere Teams gleichzeitig.'],
-        ] as $feature)
-            <flux:card class="flex flex-col gap-3">
-                <flux:icon :icon="$feature['icon']" variant="outline" class="size-8 text-zinc-400" />
-                <flux:heading size="lg">{{ $feature['title'] }}</flux:heading>
-                <flux:text class="text-zinc-500 dark:text-zinc-400">{{ $feature['description'] }}</flux:text>
-                <flux:badge color="zinc" size="sm" class="w-fit">In Entwicklung</flux:badge>
-            </flux:card>
-        @endforeach
-    </div>
+                        <div class="flex flex-col gap-3">
+                            <flux:heading size="sm">1:1-Erinnerungen</flux:heading>
+
+                            @if ($reminders->isEmpty())
+                                <flux:text class="text-sm text-zinc-500 dark:text-zinc-400">Alle 1:1s sind aktuell.</flux:text>
+                            @else
+                                <div class="flex flex-col gap-2">
+                                    @foreach ($reminders as $member)
+                                        <div class="flex items-center justify-between gap-3 rounded-lg border border-zinc-100 p-3 text-sm dark:border-zinc-700">
+                                            <flux:link :href="route('team-members.show', $member)" wire:navigate>{{ $member->fullName() }}</flux:link>
+                                            <flux:text class="text-xs text-zinc-500 dark:text-zinc-400">
+                                                {{ $member->lastOneOnOneAt() ? 'zuletzt am '.$member->lastOneOnOneAt()->format('d.m.Y') : 'noch nie' }}
+                                            </flux:text>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </flux:card>
+            @endforeach
+        </div>
+    @endif
 </div>

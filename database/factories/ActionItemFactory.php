@@ -2,16 +2,16 @@
 
 namespace Database\Factories;
 
-use App\Models\RetroActionItem;
+use App\Models\ActionItem;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<RetroActionItem>
+ * @extends Factory<ActionItem>
  */
-class RetroActionItemFactory extends Factory
+class ActionItemFactory extends Factory
 {
-    protected $model = RetroActionItem::class;
+    protected $model = ActionItem::class;
 
     /**
      * @return array<string, mixed>

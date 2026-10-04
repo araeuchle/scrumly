@@ -1,11 +1,11 @@
 <?php
 
-use App\Models\RetroActionItem;
+use App\Models\ActionItem;
 
 test('completing an action item sets is_done and completed_at', function () {
     $this->travelTo(now());
 
-    $actionItem = RetroActionItem::factory()->create();
+    $actionItem = ActionItem::factory()->create();
 
     $actionItem->complete();
 
@@ -14,7 +14,7 @@ test('completing an action item sets is_done and completed_at', function () {
 });
 
 test('reopening an action item clears is_done and completed_at', function () {
-    $actionItem = RetroActionItem::factory()->done()->create();
+    $actionItem = ActionItem::factory()->done()->create();
 
     $actionItem->reopen();
 
