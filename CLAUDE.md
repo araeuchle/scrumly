@@ -34,9 +34,17 @@ docker run --rm \
 
 ## Ports
 
-Sail's default ports (80, 3306, 5173, 6379) may collide with other local projects. This
-project is configured in `.env` to use: app on `8010`, MySQL on `3309`, Redis on `6389`,
-Vite on `5183`. Adjust there if needed, not in `compose.yaml`.
+Sail's default ports (80, 3306, 5173, 6379, 1025, 8025) may collide with other local projects.
+This project is configured in `.env` to use: app on `8010`, MySQL on `3309`, Redis on `6389`,
+Vite on `5183`, Mailpit SMTP on `1035`, Mailpit dashboard on `8035`. Adjust there if needed,
+not in `compose.yaml`.
+
+## Mail
+
+Local mail is caught by Mailpit (a `compose.yaml` service, SMTP driver in `.env`) instead of
+the `log` driver — every mail sent by the app during development shows up in Mailpit's web UI
+at `http://localhost:8035` (or whatever `FORWARD_MAILPIT_DASHBOARD_PORT` is set to) instead of
+`storage/logs/laravel.log`.
 
 ## Stack notes
 
