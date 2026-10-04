@@ -70,7 +70,7 @@ class Show extends Component
         $this->actionItemForm->reset();
     }
 
-    public function completeActionItem(int $actionItemId): void
+    public function completeActionItem(string $actionItemId): void
     {
         $actionItem = $this->sprintEvent->sprint->team->retroActionItems()->findOrFail($actionItemId);
 
@@ -79,7 +79,7 @@ class Show extends Component
         $actionItem->complete();
     }
 
-    public function reopenActionItem(int $actionItemId): void
+    public function reopenActionItem(string $actionItemId): void
     {
         $actionItem = $this->sprintEvent->sprint->team->retroActionItems()->findOrFail($actionItemId);
 
@@ -88,7 +88,7 @@ class Show extends Component
         $actionItem->reopen();
     }
 
-    public function deleteActionItem(int $actionItemId): void
+    public function deleteActionItem(string $actionItemId): void
     {
         $actionItem = $this->sprintEvent->sprint->team->retroActionItems()->findOrFail($actionItemId);
 
@@ -121,7 +121,7 @@ class Show extends Component
         ]);
     }
 
-    public function toggleSpeaking(int $teamMemberId): void
+    public function toggleSpeaking(string $teamMemberId): void
     {
         $this->authorize('update', $this->sprintEvent);
 

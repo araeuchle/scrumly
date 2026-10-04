@@ -48,7 +48,7 @@
                                         max="100"
                                         size="sm"
                                         value="{{ $member->default_capacity_percent }}"
-                                        wire:change="updateCapacity({{ $member->id }}, $event.target.value)"
+                                        wire:change="updateCapacity('{{ $member->id }}', $event.target.value)"
                                         class="w-20"
                                     />
                                     <flux:text class="text-sm text-zinc-500 dark:text-zinc-400">%</flux:text>
@@ -73,7 +73,7 @@
                                                 <flux:button variant="ghost">Abbrechen</flux:button>
                                             </flux:modal.close>
                                             <flux:modal.close>
-                                                <flux:button variant="danger" wire:click="removeMember({{ $member->id }})">
+                                                <flux:button variant="danger" wire:click="removeMember('{{ $member->id }}')">
                                                     Entfernen
                                                 </flux:button>
                                             </flux:modal.close>

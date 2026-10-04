@@ -37,7 +37,7 @@ class Members extends Component
         $this->form->reset();
     }
 
-    public function updateCapacity(int $teamMemberId, int $value): void
+    public function updateCapacity(string $teamMemberId, int $value): void
     {
         $this->authorize('update', $this->team);
 
@@ -46,7 +46,7 @@ class Members extends Component
         $this->team->teamMembers()->whereKey($teamMemberId)->update(['default_capacity_percent' => $value]);
     }
 
-    public function removeMember(int $teamMemberId): void
+    public function removeMember(string $teamMemberId): void
     {
         $this->authorize('update', $this->team);
 

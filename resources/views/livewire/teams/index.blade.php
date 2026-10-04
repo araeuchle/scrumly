@@ -41,7 +41,7 @@
     @else
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($teams as $team)
-                <button type="button" wire:click="selectTeam({{ $team->id }})" class="block w-full text-left">
+                <button type="button" wire:click="selectTeam('{{ $team->id }}')" class="block w-full text-left">
                     <flux:card class="flex flex-col gap-3 transition hover:border-zinc-300 dark:hover:border-zinc-600">
                         <flux:heading size="lg">{{ $team->name }}</flux:heading>
                         <flux:text class="text-zinc-500 dark:text-zinc-400">

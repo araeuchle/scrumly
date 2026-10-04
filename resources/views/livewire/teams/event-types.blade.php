@@ -100,9 +100,9 @@
                     </div>
 
                     <div class="flex items-center gap-1">
-                        <flux:button size="sm" variant="ghost" icon="chevron-up" wire:click="moveUp({{ $eventType->id }})" :disabled="$index === 0" />
-                        <flux:button size="sm" variant="ghost" icon="chevron-down" wire:click="moveDown({{ $eventType->id }})" :disabled="$index === $eventTypes->count() - 1" />
-                        <flux:button size="sm" variant="ghost" icon="pencil" wire:click="startEditing({{ $eventType->id }})" />
+                        <flux:button size="sm" variant="ghost" icon="chevron-up" wire:click="moveUp('{{ $eventType->id }}')" :disabled="$index === 0" />
+                        <flux:button size="sm" variant="ghost" icon="chevron-down" wire:click="moveDown('{{ $eventType->id }}')" :disabled="$index === $eventTypes->count() - 1" />
+                        <flux:button size="sm" variant="ghost" icon="pencil" wire:click="startEditing('{{ $eventType->id }}')" />
 
                         <flux:modal.trigger name="delete-event-type-{{ $eventType->id }}">
                             <flux:button size="sm" variant="ghost" icon="trash" />
@@ -122,7 +122,7 @@
                                         <flux:button variant="ghost">Abbrechen</flux:button>
                                     </flux:modal.close>
                                     <flux:modal.close>
-                                        <flux:button variant="danger" wire:click="delete({{ $eventType->id }})">
+                                        <flux:button variant="danger" wire:click="delete('{{ $eventType->id }}')">
                                             Löschen
                                         </flux:button>
                                     </flux:modal.close>

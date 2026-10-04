@@ -51,7 +51,7 @@
                                         <flux:modal.close>
                                             <button
                                                 type="button"
-                                                wire:click="addEventOccurrence({{ $eventType->id }})"
+                                                wire:click="addEventOccurrence('{{ $eventType->id }}')"
                                                 class="flex w-full items-center gap-3 rounded-lg border border-zinc-200 p-3 text-left transition hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
                                             >
                                                 <span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-zinc-900/5 dark:bg-white/10">
@@ -125,7 +125,7 @@
                                             <flux:button variant="ghost">Abbrechen</flux:button>
                                         </flux:modal.close>
                                         <flux:modal.close>
-                                            <flux:button variant="danger" wire:click="deleteEvent({{ $event->id }})">
+                                            <flux:button variant="danger" wire:click="deleteEvent('{{ $event->id }}')">
                                                 Entfernen
                                             </flux:button>
                                         </flux:modal.close>
@@ -161,7 +161,7 @@
                                     max="100"
                                     size="sm"
                                     value="{{ $capacity->capacity_percent }}"
-                                    wire:change="updateCapacity({{ $capacity->id }}, $event.target.value)"
+                                    wire:change="updateCapacity('{{ $capacity->id }}', $event.target.value)"
                                     class="w-20"
                                 />
                                 <flux:text class="text-sm text-zinc-500 dark:text-zinc-400">%</flux:text>
@@ -170,7 +170,7 @@
                                 size="sm"
                                 placeholder="Notiz, z. B. 3 Tage Urlaub"
                                 value="{{ $capacity->note }}"
-                                wire:change="updateCapacityNote({{ $capacity->id }}, $event.target.value)"
+                                wire:change="updateCapacityNote('{{ $capacity->id }}', $event.target.value)"
                             />
                         @else
                             <flux:text class="text-sm text-zinc-500 dark:text-zinc-400">

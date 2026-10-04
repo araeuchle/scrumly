@@ -14,7 +14,7 @@ class ImpedimentForm extends Form
 
     public string $priority = 'medium';
 
-    public ?int $sprintId = null;
+    public ?string $sprintId = null;
 
     public string $reportedBy = '';
 
@@ -31,7 +31,7 @@ class ImpedimentForm extends Form
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:4000'],
             'priority' => ['required', Rule::enum(ImpedimentPriority::class)],
-            'sprintId' => ['nullable', 'integer'],
+            'sprintId' => ['nullable', 'uuid'],
             'reportedBy' => ['nullable', 'string', 'max:255'],
             'owner' => ['nullable', 'string', 'max:255'],
             'resolutionNotes' => ['nullable', 'string', 'max:4000'],

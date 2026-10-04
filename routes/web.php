@@ -13,6 +13,7 @@ use App\Livewire\Sprints\Show as SprintShow;
 use App\Livewire\Teams\EventTypes as TeamEventTypes;
 use App\Livewire\Teams\Index as TeamIndex;
 use App\Livewire\Teams\Members as TeamMembers;
+use App\Livewire\Teams\Metrics as TeamMetrics;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +35,7 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/teams/{team}/members', TeamMembers::class)->name('teams.members');
     Route::get('/teams/{team}/event-types', TeamEventTypes::class)->name('teams.event-types');
     Route::get('/teams/{team}/impediments', ImpedimentIndex::class)->name('teams.impediments');
+    Route::get('/teams/{team}/metrics', TeamMetrics::class)->name('teams.metrics');
     Route::get('/teams/{team}/sprints', SprintIndex::class)->name('sprints.index');
     Route::get('/teams/{team}/sprints/create', SprintCreate::class)->name('sprints.create');
     Route::get('/sprints/{sprint}', SprintShow::class)->name('sprints.show');

@@ -18,7 +18,7 @@ class Index extends Component
 
     public bool $showForm = false;
 
-    public ?int $editingId = null;
+    public ?string $editingId = null;
 
     public ImpedimentForm $form;
 
@@ -40,7 +40,7 @@ class Index extends Component
         $this->showForm = true;
     }
 
-    public function startEditing(int $impedimentId): void
+    public function startEditing(string $impedimentId): void
     {
         $impediment = $this->team->impediments()->findOrFail($impedimentId);
 
@@ -105,7 +105,7 @@ class Index extends Component
         $this->showForm = false;
     }
 
-    public function delete(int $impedimentId): void
+    public function delete(string $impedimentId): void
     {
         $impediment = $this->team->impediments()->findOrFail($impedimentId);
 
@@ -114,7 +114,7 @@ class Index extends Component
         $impediment->delete();
     }
 
-    public function escalate(int $impedimentId): void
+    public function escalate(string $impedimentId): void
     {
         $impediment = $this->team->impediments()->findOrFail($impedimentId);
 
@@ -123,7 +123,7 @@ class Index extends Component
         $impediment->escalate();
     }
 
-    public function resolve(int $impedimentId): void
+    public function resolve(string $impedimentId): void
     {
         $impediment = $this->team->impediments()->findOrFail($impedimentId);
 
@@ -132,7 +132,7 @@ class Index extends Component
         $impediment->resolve();
     }
 
-    public function reopen(int $impedimentId): void
+    public function reopen(string $impedimentId): void
     {
         $impediment = $this->team->impediments()->findOrFail($impedimentId);
 

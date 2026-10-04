@@ -9,9 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('impediments', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('team_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('sprint_id')->nullable()->constrained()->nullOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('team_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('sprint_id')->nullable()->constrained()->nullOnDelete();
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('status')->default('open');

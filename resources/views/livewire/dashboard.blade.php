@@ -40,8 +40,18 @@
             </flux:card>
         </a>
 
+        <a href="{{ route('teams.index') }}" wire:navigate class="block">
+            <flux:card class="flex flex-col gap-3 transition hover:border-zinc-300 dark:hover:border-zinc-600">
+                <flux:icon icon="chart-bar" variant="outline" class="size-8 text-zinc-400" />
+                <flux:heading size="lg">Team-Metriken</flux:heading>
+                <flux:text class="text-zinc-500 dark:text-zinc-400">
+                    Event-Overruns, Velocity-Trend und Team Health auf einen Blick.
+                </flux:text>
+                <flux:badge color="lime" size="sm" class="w-fit">Verfügbar</flux:badge>
+            </flux:card>
+        </a>
+
         @foreach ([
-            ['icon' => 'chart-bar', 'title' => 'Team-Metriken', 'description' => 'Velocity, Burndown und Team-Health auf einen Blick.'],
             ['icon' => 'academic-cap', 'title' => 'Coaching-Assistent', 'description' => 'Checklisten und Hinweise für deine Scrum-Events.'],
             ['icon' => 'user-group', 'title' => 'Mehrere Teams', 'description' => 'Scrum-of-Scrums-Ansicht für mehrere Teams gleichzeitig.'],
         ] as $feature)

@@ -16,7 +16,7 @@ class EventTypes extends Component
 
     public bool $showForm = false;
 
-    public ?int $editingId = null;
+    public ?string $editingId = null;
 
     public TeamEventTypeForm $form;
 
@@ -34,7 +34,7 @@ class EventTypes extends Component
         $this->showForm = true;
     }
 
-    public function startEditing(int $teamEventTypeId): void
+    public function startEditing(string $teamEventTypeId): void
     {
         $eventType = $this->team->eventTypes()->findOrFail($teamEventTypeId);
 
@@ -87,24 +87,24 @@ class EventTypes extends Component
         $this->showForm = false;
     }
 
-    public function delete(int $teamEventTypeId): void
+    public function delete(string $teamEventTypeId): void
     {
         $this->authorize('update', $this->team);
 
         $this->team->eventTypes()->whereKey($teamEventTypeId)->delete();
     }
 
-    public function moveUp(int $teamEventTypeId): void
+    public function moveUp(string $teamEventTypeId): void
     {
         $this->swapOrder($teamEventTypeId, -1);
     }
 
-    public function moveDown(int $teamEventTypeId): void
+    public function moveDown(string $teamEventTypeId): void
     {
         $this->swapOrder($teamEventTypeId, 1);
     }
 
-    private function swapOrder(int $teamEventTypeId, int $direction): void
+    private function swapOrder(string $teamEventTypeId, int $direction): void
     {
         $this->authorize('update', $this->team);
 

@@ -45,6 +45,9 @@
                     <flux:navlist.item icon="exclamation-triangle" :href="route('teams.impediments', $currentTeam)" :current="request()->routeIs('teams.impediments')" wire:navigate>
                         Impediments
                     </flux:navlist.item>
+                    <flux:navlist.item icon="chart-bar" :href="route('teams.metrics', $currentTeam)" :current="request()->routeIs('teams.metrics')" wire:navigate>
+                        Team-Metriken
+                    </flux:navlist.item>
                 </flux:navlist.group>
             @endif
         </flux:navlist>

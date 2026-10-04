@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('team_event_types', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('team_id')->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('team_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('icon')->default('calendar-days');
             $table->unsignedSmallInteger('default_duration_minutes')->default(30);

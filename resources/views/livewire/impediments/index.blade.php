@@ -125,22 +125,22 @@
 
                         <div class="flex items-center gap-1">
                             @if ($impediment->status->value === 'open')
-                                <flux:button size="sm" variant="ghost" icon="arrow-trending-up" wire:click="escalate({{ $impediment->id }})">
+                                <flux:button size="sm" variant="ghost" icon="arrow-trending-up" wire:click="escalate('{{ $impediment->id }}')">
                                     Eskalieren
                                 </flux:button>
                             @endif
 
                             @if (in_array($impediment->status->value, ['open', 'escalated'], true))
-                                <flux:button size="sm" variant="ghost" icon="check" wire:click="resolve({{ $impediment->id }})">
+                                <flux:button size="sm" variant="ghost" icon="check" wire:click="resolve('{{ $impediment->id }}')">
                                     Lösen
                                 </flux:button>
                             @else
-                                <flux:button size="sm" variant="ghost" icon="arrow-path" wire:click="reopen({{ $impediment->id }})">
+                                <flux:button size="sm" variant="ghost" icon="arrow-path" wire:click="reopen('{{ $impediment->id }}')">
                                     Wieder öffnen
                                 </flux:button>
                             @endif
 
-                            <flux:button size="sm" variant="ghost" icon="pencil" wire:click="startEditing({{ $impediment->id }})" />
+                            <flux:button size="sm" variant="ghost" icon="pencil" wire:click="startEditing('{{ $impediment->id }}')" />
 
                             <flux:modal.trigger name="delete-impediment-{{ $impediment->id }}">
                                 <flux:button size="sm" variant="ghost" icon="trash" />
@@ -160,7 +160,7 @@
                                             <flux:button variant="ghost">Abbrechen</flux:button>
                                         </flux:modal.close>
                                         <flux:modal.close>
-                                            <flux:button variant="danger" wire:click="delete({{ $impediment->id }})">
+                                            <flux:button variant="danger" wire:click="delete('{{ $impediment->id }}')">
                                                 Löschen
                                             </flux:button>
                                         </flux:modal.close>

@@ -9,9 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('daily_speaking_turns', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('sprint_event_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('team_member_id')->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('sprint_event_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('team_member_id')->constrained()->cascadeOnDelete();
             $table->unsignedInteger('seconds')->default(0);
             $table->timestamp('started_at')->nullable();
             $table->timestamps();

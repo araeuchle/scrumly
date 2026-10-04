@@ -9,7 +9,7 @@ use Livewire\Component;
 
 class Switcher extends Component
 {
-    public ?int $currentTeamId = null;
+    public ?string $currentTeamId = null;
 
     public function mount(): void
     {

@@ -31,7 +31,7 @@ class Index extends Component
         $this->redirectRoute('sprints.index', $team, navigate: true);
     }
 
-    public function selectTeam(int $teamId): void
+    public function selectTeam(string $teamId): void
     {
         $user = $this->currentUser();
         $team = $user->teams()->findOrFail($teamId);

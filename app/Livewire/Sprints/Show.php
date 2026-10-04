@@ -23,7 +23,7 @@ class Show extends Component
         $this->sprint = $sprint;
     }
 
-    public function updateCapacity(int $capacityId, int $value): void
+    public function updateCapacity(string $capacityId, int $value): void
     {
         $this->authorize('update', $this->sprint);
 
@@ -32,14 +32,14 @@ class Show extends Component
         $this->sprint->capacities()->whereKey($capacityId)->update(['capacity_percent' => $value]);
     }
 
-    public function updateCapacityNote(int $capacityId, string $note): void
+    public function updateCapacityNote(string $capacityId, string $note): void
     {
         $this->authorize('update', $this->sprint);
 
         $this->sprint->capacities()->whereKey($capacityId)->update(['note' => $note ?: null]);
     }
 
-    public function addEventOccurrence(int $teamEventTypeId): void
+    public function addEventOccurrence(string $teamEventTypeId): void
     {
         $this->authorize('update', $this->sprint);
 
@@ -65,7 +65,7 @@ class Show extends Component
         $this->redirectRoute('sprint-events.show', $event, navigate: true);
     }
 
-    public function deleteEvent(int $eventId): void
+    public function deleteEvent(string $eventId): void
     {
         $this->authorize('update', $this->sprint);
 

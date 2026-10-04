@@ -110,10 +110,10 @@
 
                                     @can('update', $sprintEvent)
                                         <div class="flex shrink-0 items-center gap-1">
-                                            <flux:button size="sm" variant="ghost" icon="check" wire:click="completeActionItem({{ $actionItem->id }})">
+                                            <flux:button size="sm" variant="ghost" icon="check" wire:click="completeActionItem('{{ $actionItem->id }}')">
                                                 Erledigt
                                             </flux:button>
-                                            <flux:button size="sm" variant="ghost" icon="trash" wire:click="deleteActionItem({{ $actionItem->id }})" />
+                                            <flux:button size="sm" variant="ghost" icon="trash" wire:click="deleteActionItem('{{ $actionItem->id }}')" />
                                         </div>
                                     @endcan
                                 </div>
@@ -152,7 +152,7 @@
                                         size="sm"
                                         :variant="$isActive ? 'primary' : 'ghost'"
                                         :icon="$isActive ? 'stop' : 'microphone'"
-                                        wire:click="toggleSpeaking({{ $data['teamMember']->id }})"
+                                        wire:click="toggleSpeaking('{{ $data['teamMember']->id }}')"
                                     >
                                         {{ $isActive ? 'Stopp' : 'Sprechen' }}
                                     </flux:button>
