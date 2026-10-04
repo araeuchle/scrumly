@@ -7,6 +7,7 @@ use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Dashboard;
 use App\Livewire\Impediments\Index as ImpedimentIndex;
 use App\Livewire\Journal\Index as JournalIndex;
+use App\Livewire\Settings\Index as SettingsIndex;
 use App\Livewire\SprintEvents\Show as SprintEventShow;
 use App\Livewire\Sprints\Create as SprintCreate;
 use App\Livewire\Sprints\Index as SprintIndex;
@@ -44,6 +45,7 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/sprints/{sprint}', SprintShow::class)->name('sprints.show');
     Route::get('/sprint-events/{sprintEvent}', SprintEventShow::class)->name('sprint-events.show');
     Route::get('/team-members/{teamMember}', TeamMemberShow::class)->name('team-members.show');
+    Route::get('/settings', SettingsIndex::class)->name('settings');
 
     Route::post('/logout', function (Request $request): RedirectResponse {
         Auth::guard('web')->logout();

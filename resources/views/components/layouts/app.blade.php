@@ -39,11 +39,11 @@
                     <flux:navlist.item icon="users" :href="route('teams.members', $currentTeam)" :current="request()->routeIs('teams.members')" wire:navigate>
                         Mitglieder
                     </flux:navlist.item>
-                    <flux:navlist.item icon="calendar-days" :href="route('sprints.index', $currentTeam)" :current="request()->routeIs('sprints.*', 'sprint-events.*')" wire:navigate>
-                        Sprints
-                    </flux:navlist.item>
                     <flux:navlist.item icon="adjustments-horizontal" :href="route('teams.event-types', $currentTeam)" :current="request()->routeIs('teams.event-types')" wire:navigate>
                         Event-Typen
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="calendar-days" :href="route('sprints.index', $currentTeam)" :current="request()->routeIs('sprints.*', 'sprint-events.*')" wire:navigate>
+                        Sprints
                     </flux:navlist.item>
                     <flux:navlist.item icon="exclamation-triangle" :href="route('teams.impediments', $currentTeam)" :current="request()->routeIs('teams.impediments')" wire:navigate>
                         Impediments
@@ -57,11 +57,31 @@
 
         <flux:spacer />
 
+        <div class="mb-2">
+            <flux:dropdown position="top" align="start">
+                <flux:button variant="ghost" size="sm" square aria-label="Darstellung">
+                    <flux:icon icon="sun" x-show="Flux.appearance === 'light'" variant="outline" class="size-4" />
+                    <flux:icon icon="moon" x-show="Flux.appearance === 'dark'" variant="outline" class="size-4" />
+                    <flux:icon icon="computer-desktop" x-show="Flux.appearance === 'system'" variant="outline" class="size-4" />
+                </flux:button>
+
+                <flux:menu>
+                    <flux:menu.item icon="sun" x-on:click="Flux.appearance = 'light'">Hell</flux:menu.item>
+                    <flux:menu.item icon="moon" x-on:click="Flux.appearance = 'dark'">Dunkel</flux:menu.item>
+                    <flux:menu.item icon="computer-desktop" x-on:click="Flux.appearance = 'system'">System</flux:menu.item>
+                </flux:menu>
+            </flux:dropdown>
+        </div>
+
         <flux:dropdown position="bottom" align="start">
             <flux:sidebar.profile :name="auth()->user()->name" />
 
             <flux:menu>
                 <flux:menu.item disabled>{{ auth()->user()->email }}</flux:menu.item>
+                <flux:menu.separator />
+                <flux:menu.item icon="user-circle" :href="route('settings')" wire:navigate>
+                    Profil & Sicherheit
+                </flux:menu.item>
                 <flux:menu.separator />
                 <form method="POST" action="{{ route('logout') }}" class="w-full">
                     @csrf
@@ -78,11 +98,31 @@
 
         <flux:spacer />
 
+        <div>
+            <flux:dropdown position="top" align="end">
+                <flux:button variant="ghost" size="sm" square aria-label="Darstellung">
+                    <flux:icon icon="sun" x-show="Flux.appearance === 'light'" variant="outline" class="size-4" />
+                    <flux:icon icon="moon" x-show="Flux.appearance === 'dark'" variant="outline" class="size-4" />
+                    <flux:icon icon="computer-desktop" x-show="Flux.appearance === 'system'" variant="outline" class="size-4" />
+                </flux:button>
+
+                <flux:menu>
+                    <flux:menu.item icon="sun" x-on:click="Flux.appearance = 'light'">Hell</flux:menu.item>
+                    <flux:menu.item icon="moon" x-on:click="Flux.appearance = 'dark'">Dunkel</flux:menu.item>
+                    <flux:menu.item icon="computer-desktop" x-on:click="Flux.appearance = 'system'">System</flux:menu.item>
+                </flux:menu>
+            </flux:dropdown>
+        </div>
+
         <flux:dropdown position="top" align="end">
             <flux:sidebar.profile :name="auth()->user()->name" />
 
             <flux:menu>
                 <flux:menu.item disabled>{{ auth()->user()->email }}</flux:menu.item>
+                <flux:menu.separator />
+                <flux:menu.item icon="user-circle" :href="route('settings')" wire:navigate>
+                    Profil & Sicherheit
+                </flux:menu.item>
                 <flux:menu.separator />
                 <form method="POST" action="{{ route('logout') }}" class="w-full">
                     @csrf
