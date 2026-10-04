@@ -26,6 +26,21 @@ test('the owner can add an event type', function () {
     expect($eventType->track_speaking_time)->toBeTrue();
 });
 
+test('the owner can mark an event type as the retrospective', function () {
+    [$team, $owner] = createTeamForOwner();
+
+    Livewire::actingAs($owner)
+        ->test(EventTypes::class, ['team' => $team])
+        ->set('form.name', 'Retro')
+        ->set('form.isRetrospective', true)
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $eventType = $team->fresh()->eventTypes->first();
+
+    expect($eventType->is_retrospective)->toBeTrue();
+});
+
 test('a name is required to add an event type', function () {
     [$team, $owner] = createTeamForOwner();
 

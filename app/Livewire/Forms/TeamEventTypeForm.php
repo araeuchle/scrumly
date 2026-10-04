@@ -36,6 +36,8 @@ class TeamEventTypeForm extends Form
 
     public bool $trackSpeakingTime = false;
 
+    public bool $isRetrospective = false;
+
     /**
      * @return array<string, array<int, mixed>>
      */
@@ -49,6 +51,7 @@ class TeamEventTypeForm extends Form
             'isRecurring' => ['boolean'],
             'timing' => ['required', 'in:start,end'],
             'trackSpeakingTime' => ['boolean'],
+            'isRetrospective' => ['boolean'],
         ];
     }
 }

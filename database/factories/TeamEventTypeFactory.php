@@ -44,4 +44,11 @@ class TeamEventTypeFactory extends Factory
             'track_speaking_time' => true,
         ]);
     }
+
+    public function retrospective(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_retrospective' => true,
+        ]);
+    }
 }

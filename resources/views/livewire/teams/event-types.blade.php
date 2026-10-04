@@ -52,6 +52,13 @@
 
                 <flux:checkbox wire:model="form.trackSpeakingTime" label="Redezeit pro Teammitglied erfassen" />
 
+                <div class="flex flex-col gap-2">
+                    <flux:checkbox wire:model="form.isRetrospective" label="Dies ist die Retrospektive" />
+                    <flux:text class="text-sm text-zinc-500 dark:text-zinc-400">
+                        Blendet auf der Event-Seite den Board-Link und die teamweiten Action Items ein.
+                    </flux:text>
+                </div>
+
                 <div class="flex gap-2">
                     <flux:button type="submit" variant="primary">{{ $editingId ? 'Speichern' : 'Anlegen' }}</flux:button>
                     <flux:button type="button" variant="ghost" wire:click="cancelForm">Abbrechen</flux:button>
@@ -84,6 +91,9 @@
                                 {{ $eventType->is_recurring ? 'Wiederkehrend' : $eventType->timingLabel() }}
                                 @if ($eventType->track_speaking_time)
                                     &middot; Redezeit-Tracking
+                                @endif
+                                @if ($eventType->is_retrospective)
+                                    &middot; Retrospektive
                                 @endif
                             </flux:text>
                         </div>

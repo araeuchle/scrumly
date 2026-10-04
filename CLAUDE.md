@@ -49,9 +49,18 @@ Vite on `5183`. Adjust there if needed, not in `compose.yaml`.
   to match. The sidebar (`components/layouts/app.blade.php`) calls this once per request to decide
   whether to render the team-scoped nav group (Mitglieder/Sprints/Event-Typen/Impediments) at all,
   and embeds `<livewire:teams.switcher />` — a small persistent child component
-  (`App\Livewire\Teams\Switcher`) with a `<flux:select>` bound to `currentTeamId` — so switching
-  teams is one request that updates `current_team_id` and redirects, not a page link. Every place
-  a team becomes "current" (creating one in `Teams\Index::createTeam()`, clicking a team card via
+  (`App\Livewire\Teams\Switcher`) with a `<flux:select>` bound to `currentTeamId`. Because the
+  sidebar lives outside the `wire:navigate`-swapped region, it (and the switcher inside it) is
+  **not** re-mounted on every in-app navigation — a server-side `redirectRoute()` from the switcher
+  would only know the route that was active when the sidebar last fully loaded, not the page the
+  user is actually on. So the switcher only updates `current_team_id` and dispatches a
+  `team-switched` browser event with the new team id; a small Alpine listener in
+  `livewire/teams/switcher.blade.php` reads the *live* `window.location.pathname`, swaps the
+  `/teams/{id}/` segment for the new id (falling back to that team's `sprints` page for URLs that
+  don't carry a team segment, e.g. the dashboard or a specific sprint), and calls
+  `Livewire.navigate()` — keeping the user on the same kind of page (Mitglieder stays Mitglieder,
+  etc.) regardless of how stale the component's server-side state is. Every place a team becomes
+  "current" (creating one in `Teams\Index::createTeam()`, clicking a team card via
   `Teams\Index::selectTeam()`, or the switcher's `updatedCurrentTeamId()`) must write
   `current_team_id` through a query scoped to `$user->teams()` (e.g. `->findOrFail($teamId)`)
   rather than loading the team by raw ID first — that scoping is what stops a user from switching
@@ -104,6 +113,23 @@ Vite on `5183`. Adjust there if needed, not in `compose.yaml`.
   `remainingSeconds()` freezes its calculation at `ended_at` once an event is completed — it must
   never keep computing against `now()` for a finished event, or the UI reports a growing overtime
   forever.
+- **Retrospectives deliberately don't have their own live collaborative board** — the user decided
+  most Scrum Masters already run retros in Miro/Retrium and just want the surrounding workflow
+  managed in Scrumly, not a competing whiteboard (and building a real-time anonymous-input board
+  would have required the app's first unauthenticated write surface, since `TeamMember`s have no
+  login). Instead, `TeamEventType.is_retrospective` (boolean, like `track_speaking_time`) marks
+  which event type is a team's retro and drives whether `SprintEvents/Show` renders the Board/
+  Action-Items sections; the pre/post notes workflow needed no new fields at all, since every
+  event already has `agenda` (prep notes, editable beforehand) and `notes` (editable any time,
+  including after). The only new columns are `sprint_events.board_url` (the Miro link, saved via
+  the same no-validation `wire:model.live.debounce.750ms` + `updatedX()` pattern as agenda/notes —
+  intentionally not run through a Form object, to stay consistent with its sibling fields) and the
+  `retro_action_items` table. `RetroActionItem` belongs to the **Team**, not to a `SprintEvent` or
+  `Sprint` — it only optionally references the `sprint_event_id` it originated from (`nullOnDelete`)
+  for context — specifically so open action items survive past the sprint/retro that created them
+  and keep showing up as "offene Action Items" on every later retro until marked done. Don't
+  change that to a `Sprint`-owned or `SprintEvent`-owned relationship; that would silently lose
+  action items exactly where losing them was the thing being fixed.
 - **`wire:model.blur` does not fire its request in this Livewire 4 + Flux setup** — confirmed by
   direct testing: the browser-side state updates, a real `blur` event fires, but no network
   request is ever sent (verified via the container's access log, not just dev tools). Use

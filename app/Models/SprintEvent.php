@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read Sprint $sprint
  * @property-read TeamEventType $teamEventType
  */
-#[Fillable(['sprint_id', 'team_event_type_id', 'scheduled_date', 'duration_minutes', 'agenda', 'notes', 'status', 'started_at', 'ended_at'])]
+#[Fillable(['sprint_id', 'team_event_type_id', 'scheduled_date', 'duration_minutes', 'agenda', 'notes', 'board_url', 'status', 'started_at', 'ended_at'])]
 class SprintEvent extends Model
 {
     /** @use HasFactory<SprintEventFactory> */
@@ -55,6 +55,14 @@ class SprintEvent extends Model
     public function speakingTurns(): HasMany
     {
         return $this->hasMany(DailySpeakingTurn::class);
+    }
+
+    /**
+     * @return HasMany<RetroActionItem, $this>
+     */
+    public function retroActionItems(): HasMany
+    {
+        return $this->hasMany(RetroActionItem::class);
     }
 
     public function remainingSeconds(): int

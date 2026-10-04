@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'is_recurring',
     'timing',
     'track_speaking_time',
+    'is_retrospective',
     'sort_order',
 ])]
 class TeamEventType extends Model
@@ -33,6 +34,7 @@ class TeamEventType extends Model
         return [
             'is_recurring' => 'boolean',
             'track_speaking_time' => 'boolean',
+            'is_retrospective' => 'boolean',
         ];
     }
 

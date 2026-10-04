@@ -5,6 +5,7 @@ use App\Livewire\SprintEvents\Show;
 use App\Models\DailySpeakingTurn;
 use App\Models\Sprint;
 use App\Models\SprintEvent;
+use App\Models\TeamEventType;
 use App\Models\User;
 use Livewire\Livewire;
 
@@ -122,6 +123,114 @@ test('the owner can start and stop a team member speaking turn', function () {
 
     expect($turn->fresh()->isActive())->toBeFalse();
     expect($turn->fresh()->seconds)->toBeGreaterThanOrEqual(0);
+});
+
+test('editing the board url persists the change', function () {
+    [$team, $owner] = createTeamForOwner();
+    $sprint = Sprint::factory()->for($team)->create();
+    $event = SprintEvent::factory()->for($sprint)->create();
+
+    Livewire::actingAs($owner)
+        ->test(Show::class, ['sprintEvent' => $event])
+        ->set('boardUrl', 'https://miro.com/app/board/abc123/');
+
+    expect($event->fresh()->board_url)->toBe('https://miro.com/app/board/abc123/');
+});
+
+test('the retro board and action items only show for a retrospective event type', function () {
+    [$team, $owner] = createTeamForOwner();
+    $sprint = Sprint::factory()->for($team)->create();
+    $regularEvent = SprintEvent::factory()->for($sprint)->create();
+
+    Livewire::actingAs($owner)
+        ->test(Show::class, ['sprintEvent' => $regularEvent])
+        ->assertDontSee('Offene Action Items');
+});
+
+test('the owner can add a retro action item that belongs to the team', function () {
+    [$team, $owner] = createTeamForOwner();
+    $sprint = Sprint::factory()->for($team)->create();
+    $retroType = TeamEventType::factory()->for($team)->retrospective()->create();
+    $event = SprintEvent::factory()->for($sprint)->for($retroType, 'teamEventType')->create();
+
+    Livewire::actingAs($owner)
+        ->test(Show::class, ['sprintEvent' => $event])
+        ->set('actionItemForm.description', 'CI-Pipeline beschleunigen')
+        ->call('addActionItem')
+        ->assertHasNoErrors();
+
+    $actionItem = $team->fresh()->retroActionItems->first();
+
+    expect($actionItem)->not->toBeNull();
+    expect($actionItem->description)->toBe('CI-Pipeline beschleunigen');
+    expect($actionItem->is_done)->toBeFalse();
+    expect($actionItem->sprint_event_id)->toBe($event->id);
+});
+
+test('a description is required to add a retro action item', function () {
+    [$team, $owner] = createTeamForOwner();
+    $sprint = Sprint::factory()->for($team)->create();
+    $retroType = TeamEventType::factory()->for($team)->retrospective()->create();
+    $event = SprintEvent::factory()->for($sprint)->for($retroType, 'teamEventType')->create();
+
+    Livewire::actingAs($owner)
+        ->test(Show::class, ['sprintEvent' => $event])
+        ->set('actionItemForm.description', '')
+        ->call('addActionItem')
+        ->assertHasErrors('actionItemForm.description');
+
+    expect($team->fresh()->retroActionItems)->toBeEmpty();
+});
+
+test('the owner can complete, reopen and delete a retro action item', function () {
+    [$team, $owner] = createTeamForOwner();
+    $sprint = Sprint::factory()->for($team)->create();
+    $retroType = TeamEventType::factory()->for($team)->retrospective()->create();
+    $event = SprintEvent::factory()->for($sprint)->for($retroType, 'teamEventType')->create();
+    $actionItem = $team->retroActionItems()->create(['description' => 'Pairing etablieren', 'sprint_event_id' => $event->id]);
+
+    $component = Livewire::actingAs($owner)->test(Show::class, ['sprintEvent' => $event]);
+
+    $component->call('completeActionItem', $actionItem->id);
+    expect($actionItem->fresh()->is_done)->toBeTrue();
+    expect($actionItem->fresh()->completed_at)->not->toBeNull();
+
+    $component->call('reopenActionItem', $actionItem->id);
+    expect($actionItem->fresh()->is_done)->toBeFalse();
+
+    $component->call('deleteActionItem', $actionItem->id);
+    expect($team->fresh()->retroActionItems)->toBeEmpty();
+});
+
+test('open action items from an earlier retro still appear on a later retro of a new sprint', function () {
+    [$team, $owner] = createTeamForOwner();
+    $retroType = TeamEventType::factory()->for($team)->retrospective()->create();
+
+    $firstSprint = Sprint::factory()->for($team)->create();
+    $firstRetro = SprintEvent::factory()->for($firstSprint, 'sprint')->for($retroType, 'teamEventType')->create();
+    $team->retroActionItems()->create(['description' => 'Deploy-Prozess dokumentieren', 'sprint_event_id' => $firstRetro->id]);
+
+    $secondSprint = Sprint::factory()->for($team)->create();
+    $secondRetro = SprintEvent::factory()->for($secondSprint, 'sprint')->for($retroType, 'teamEventType')->create();
+
+    Livewire::actingAs($owner)
+        ->test(Show::class, ['sprintEvent' => $secondRetro])
+        ->assertSee('Deploy-Prozess dokumentieren');
+});
+
+test('a user who does not own the team cannot manage retro action items', function () {
+    [$team] = createTeamForOwner();
+    $sprint = Sprint::factory()->for($team)->create();
+    $retroType = TeamEventType::factory()->for($team)->retrospective()->create();
+    $event = SprintEvent::factory()->for($sprint)->for($retroType, 'teamEventType')->create();
+    $actionItem = $team->retroActionItems()->create(['description' => 'Pairing etablieren', 'sprint_event_id' => $event->id]);
+    $outsider = User::factory()->create();
+
+    $this->actingAs($outsider)
+        ->get(route('sprint-events.show', $event))
+        ->assertForbidden();
+
+    expect($actionItem->fresh()->is_done)->toBeFalse();
 });
 
 test('starting a new speaking turn stops any other active turn', function () {

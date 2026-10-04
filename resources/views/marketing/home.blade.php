@@ -34,7 +34,7 @@
                 [
                     'icon' => 'chat-bubble-left-right',
                     'title' => 'Retrospektiven-Tool',
-                    'description' => 'Bewährte Templates, anonymes Feedback und Action Items, die wirklich nachverfolgt werden.',
+                    'description' => 'Board-Link eurer Wahl griffbereit und Action Items, die wirklich nachverfolgt werden.',
                 ],
                 [
                     'icon' => 'exclamation-triangle',

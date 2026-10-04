@@ -46,6 +46,7 @@ class EventTypes extends Component
         $this->form->isRecurring = $eventType->is_recurring;
         $this->form->timing = $eventType->timing;
         $this->form->trackSpeakingTime = $eventType->track_speaking_time;
+        $this->form->isRetrospective = $eventType->is_retrospective;
         $this->showForm = true;
     }
 
@@ -70,6 +71,7 @@ class EventTypes extends Component
             'is_recurring' => $validated['isRecurring'],
             'timing' => $validated['timing'],
             'track_speaking_time' => $validated['trackSpeakingTime'],
+            'is_retrospective' => $validated['isRetrospective'],
         ];
 
         if ($this->editingId !== null) {

@@ -55,6 +55,14 @@ class Team extends Model
         return $this->hasMany(Impediment::class);
     }
 
+    /**
+     * @return HasMany<RetroActionItem, $this>
+     */
+    public function retroActionItems(): HasMany
+    {
+        return $this->hasMany(RetroActionItem::class);
+    }
+
     public function isOwnedBy(User $user): bool
     {
         return $this->user_id === $user->id;

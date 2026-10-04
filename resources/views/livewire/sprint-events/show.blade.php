@@ -61,6 +61,68 @@
                 @endcan
             </flux:card>
 
+            @if ($sprintEvent->teamEventType->is_retrospective)
+                <flux:card class="flex flex-col gap-4">
+                    <flux:heading size="lg">Board</flux:heading>
+
+                    @can('update', $sprintEvent)
+                        <div class="flex items-end gap-2">
+                            <div class="flex-1">
+                                <flux:input wire:model.live.debounce.750ms="boardUrl" type="url" label="Link zum Board" placeholder="https://miro.com/app/board/…" />
+                            </div>
+                            @if ($boardUrl)
+                                <flux:button variant="ghost" icon="arrow-top-right-on-square" :href="$boardUrl" target="_blank">
+                                    Öffnen
+                                </flux:button>
+                            @endif
+                        </div>
+                    @else
+                        @if ($sprintEvent->board_url)
+                            <flux:link :href="$sprintEvent->board_url" target="_blank">{{ $sprintEvent->board_url }}</flux:link>
+                        @else
+                            <flux:text class="text-zinc-500 dark:text-zinc-400">Kein Board hinterlegt.</flux:text>
+                        @endif
+                    @endcan
+                </flux:card>
+
+                <flux:card class="flex flex-col gap-4">
+                    <flux:heading size="lg">Offene Action Items</flux:heading>
+                    <flux:text class="text-sm text-zinc-500 dark:text-zinc-400">
+                        Auch aus vorherigen Retros &mdash; diese gehen beim Sprintwechsel nicht verloren.
+                    </flux:text>
+
+                    @can('update', $sprintEvent)
+                        <form wire:submit="addActionItem" class="flex items-end gap-2">
+                            <div class="flex-1">
+                                <flux:input wire:model="actionItemForm.description" placeholder="Neues Action Item" />
+                            </div>
+                            <flux:button type="submit" variant="primary" icon="plus">Hinzufügen</flux:button>
+                        </form>
+                    @endcan
+
+                    @if ($retroActionItems->isEmpty())
+                        <flux:text class="text-zinc-500 dark:text-zinc-400">Keine offenen Action Items.</flux:text>
+                    @else
+                        <div class="flex flex-col gap-2">
+                            @foreach ($retroActionItems as $actionItem)
+                                <div class="flex items-center justify-between gap-3 rounded-lg border border-zinc-100 p-3 dark:border-zinc-700" wire:key="action-item-{{ $actionItem->id }}">
+                                    <flux:text>{{ $actionItem->description }}</flux:text>
+
+                                    @can('update', $sprintEvent)
+                                        <div class="flex shrink-0 items-center gap-1">
+                                            <flux:button size="sm" variant="ghost" icon="check" wire:click="completeActionItem({{ $actionItem->id }})">
+                                                Erledigt
+                                            </flux:button>
+                                            <flux:button size="sm" variant="ghost" icon="trash" wire:click="deleteActionItem({{ $actionItem->id }})" />
+                                        </div>
+                                    @endcan
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </flux:card>
+            @endif
+
             @if ($sprintEvent->teamEventType->track_speaking_time && count($speakingTurns) > 0)
                 <flux:card class="flex flex-col gap-4">
                     <flux:heading size="lg">Redezeit</flux:heading>
