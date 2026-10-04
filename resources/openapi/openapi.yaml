@@ -1,0 +1,302 @@
+openapi: 3.1.0
+info:
+  title: Scrumly Magazin-API
+  description: >-
+    API für Redakteure, um Blog-Posts anzulegen, zu bearbeiten und zu
+    veröffentlichen. Veröffentlichte Posts erscheinen öffentlich im
+    Magazin unter /magazin.
+  version: "1.0.0"
+servers:
+  - url: /api
+    description: Scrumly API
+security:
+  - bearerAuth: []
+tags:
+  - name: Posts
+    description: Blog-Posts verwalten
+paths:
+  /posts:
+    get:
+      tags: [Posts]
+      summary: Eigene Posts auflisten
+      description: Listet alle Posts (Entwürfe und veröffentlichte) des authentifizierten Redakteurs.
+      responses:
+        "200":
+          description: Liste der eigenen Posts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Post"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    post:
+      tags: [Posts]
+      summary: Neuen Post anlegen
+      description: >-
+        Legt einen neuen Post an. Der Slug wird serverseitig aus dem Titel
+        generiert (und bei Kollision automatisch dedupliziert). Ohne
+        `published: true` wird der Post als Entwurf angelegt.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostInput"
+      responses:
+        "201":
+          description: Post wurde angelegt
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Post"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+  /posts/{post}:
+    parameters:
+      - $ref: "#/components/parameters/PostId"
+    get:
+      tags: [Posts]
+      summary: Einen Post abrufen
+      responses:
+        "200":
+          description: Der Post
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Post"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      tags: [Posts]
+      summary: Einen Post aktualisieren
+      description: Nur der Redakteur, dem der Post gehört, darf ihn bearbeiten.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostUpdateInput"
+      responses:
+        "200":
+          description: Der aktualisierte Post
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Post"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+    delete:
+      tags: [Posts]
+      summary: Einen Post löschen
+      description: Nur der Redakteur, dem der Post gehört, darf ihn löschen.
+      responses:
+        "204":
+          description: Post wurde gelöscht
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /posts/{post}/publish:
+    parameters:
+      - $ref: "#/components/parameters/PostId"
+    post:
+      tags: [Posts]
+      summary: Einen Post veröffentlichen
+      description: Setzt `published_at` auf jetzt, falls noch nicht gesetzt.
+      responses:
+        "200":
+          description: Der veröffentlichte Post
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Post"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /posts/{post}/unpublish:
+    parameters:
+      - $ref: "#/components/parameters/PostId"
+    post:
+      tags: [Posts]
+      summary: Einen Post zurückziehen
+      description: Setzt `published_at` zurück auf null (wird wieder zum Entwurf).
+      responses:
+        "200":
+          description: Der zurückgezogene Post
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Post"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /openapi.yaml:
+    get:
+      tags: [Dokumentation]
+      summary: Diese OpenAPI-Spezifikation abrufen
+      responses:
+        "200":
+          description: OpenAPI-Dokument im YAML-Format
+          content:
+            application/yaml:
+              schema:
+                type: string
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: >-
+        Sanctum-Personal-Access-Token, ausgegeben über
+        `php artisan editors:create-token "Name" email@beispiel.de`.
+  parameters:
+    PostId:
+      name: post
+      in: path
+      required: true
+      description: UUID des Posts
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        slug:
+          type: string
+        excerpt:
+          type: string
+          nullable: true
+        body:
+          type: string
+          description: Markdown-Quelltext
+        cover_image_url:
+          type: string
+          format: uri
+          nullable: true
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: "null = Entwurf, gesetzt = veröffentlicht"
+        editor:
+          type: object
+          properties:
+            name:
+              type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    PostInput:
+      type: object
+      required: [title, body]
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        excerpt:
+          type: string
+          maxLength: 500
+          nullable: true
+        body:
+          type: string
+          description: Markdown-Quelltext
+        cover_image_url:
+          type: string
+          format: uri
+          maxLength: 2048
+          nullable: true
+        published:
+          type: boolean
+          description: Direkt veröffentlichen statt als Entwurf anzulegen
+    PostUpdateInput:
+      allOf:
+        - $ref: "#/components/schemas/PostInput"
+      required: []
+  responses:
+    Unauthorized:
+      description: Kein oder ungültiges API-Token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+    Forbidden:
+      description: Der Post gehört einem anderen Redakteur
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+    NotFound:
+      description: Post nicht gefunden
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+    ValidationError:
+      description: Validierungsfehler
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              errors:
+                type: object

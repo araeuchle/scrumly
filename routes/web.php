@@ -7,6 +7,8 @@ use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Dashboard;
 use App\Livewire\Impediments\Index as ImpedimentIndex;
 use App\Livewire\Journal\Index as JournalIndex;
+use App\Livewire\Magazine\Index as MagazineIndex;
+use App\Livewire\Magazine\Show as MagazineShow;
 use App\Livewire\Settings\Index as SettingsIndex;
 use App\Livewire\SprintEvents\Show as SprintEventShow;
 use App\Livewire\Sprints\Create as SprintCreate;
@@ -23,6 +25,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'marketing.home')->name('home');
+
+Route::get('/magazin', MagazineIndex::class)->name('magazine.index');
+Route::get('/magazin/{post:slug}', MagazineShow::class)->name('magazine.show');
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', Login::class)->name('login');

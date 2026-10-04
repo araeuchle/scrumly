@@ -12,6 +12,8 @@
         <flux:spacer />
 
         <flux:navbar class="gap-2">
+            <flux:button :href="route('magazine.index')" variant="ghost" wire:navigate>Magazin</flux:button>
+
             @auth
                 <flux:button :href="route('dashboard')" variant="primary" wire:navigate>Zum Dashboard</flux:button>
             @else
