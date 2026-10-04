@@ -50,6 +50,14 @@ class User extends Authenticatable
     }
 
     /**
+     * @return HasMany<JournalEntry, $this>
+     */
+    public function journalEntries(): HasMany
+    {
+        return $this->hasMany(JournalEntry::class);
+    }
+
+    /**
      * The team shown as active in the UI: the stored current team if it still belongs to this
      * user, otherwise the user's first team (self-healing the stored value along the way).
      */

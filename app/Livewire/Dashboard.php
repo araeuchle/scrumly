@@ -20,7 +20,14 @@ class Dashboard extends Component
             ])
             ->get();
 
-        return view('livewire.dashboard', ['teams' => $teams]);
+        $hasJournalEntryToday = $this->currentUser()->journalEntries()
+            ->whereDate('entry_date', now()->toDateString())
+            ->exists();
+
+        return view('livewire.dashboard', [
+            'teams' => $teams,
+            'hasJournalEntryToday' => $hasJournalEntryToday,
+        ]);
     }
 
     private function currentUser(): User

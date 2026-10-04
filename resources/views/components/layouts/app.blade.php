@@ -29,6 +29,9 @@
                 <flux:navlist.item icon="user-group" :href="route('teams.index')" :current="request()->routeIs('teams.index')" wire:navigate>
                     Teams
                 </flux:navlist.item>
+                <flux:navlist.item icon="book-open" :href="route('journal.index')" :current="request()->routeIs('journal.index')" wire:navigate>
+                    Tagebuch
+                </flux:navlist.item>
             </flux:navlist.group>
 
             @if ($currentTeam)

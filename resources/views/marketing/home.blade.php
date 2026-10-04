@@ -9,8 +9,8 @@
             </flux:heading>
 
             <flux:text class="text-lg text-zinc-500 dark:text-zinc-400">
-                Scrumly nimmt dir die organisatorische Last von Sprint-Events, Retrospektiven und Impediments ab,
-                damit du dich auf das konzentrieren kannst, was wirklich zählt: dein Team.
+                Scrumly nimmt dir die organisatorische Last von Sprint-Events, Retrospektiven, Impediments und
+                1:1-Gesprächen ab, damit du dich auf das konzentrieren kannst, was wirklich zählt: dein Team.
             </flux:text>
 
             <div class="flex gap-3">
@@ -29,32 +29,32 @@
                 [
                     'icon' => 'calendar-days',
                     'title' => 'Sprint- & Event-Management',
-                    'description' => 'Kapazitätsplanung und automatische Agenden für Daily, Planning, Review und Retro.',
+                    'description' => 'Individuelle Event-Typen pro Team, automatisch erzeugte Termine und Kapazitätsplanung für Daily, Planning, Review und Retro.',
                 ],
                 [
                     'icon' => 'chat-bubble-left-right',
-                    'title' => 'Retrospektiven-Tool',
-                    'description' => 'Board-Link eurer Wahl griffbereit und Action Items, die wirklich nachverfolgt werden.',
+                    'title' => 'Retrospektiven',
+                    'description' => 'Board-Link eurer Wahl griffbereit, Vor- und Nachbereitung in Notizen und Action Items, die bis zur Erledigung sichtbar bleiben.',
                 ],
                 [
                     'icon' => 'exclamation-triangle',
                     'title' => 'Impediment-Tracker',
-                    'description' => 'Blocker zentral erfassen statt in Zetteln oder Chat-Nachrichten verlieren.',
+                    'description' => 'Blocker erfassen, eskalieren und auflösen — mit Priorität und Status statt in Zetteln oder Chat-Nachrichten zu verlieren.',
+                ],
+                [
+                    'icon' => 'user-circle',
+                    'title' => '1:1-Gespräche',
+                    'description' => 'Ein Zeitstrahl pro Team-Mitglied für Notizen aus jedem Gespräch, inklusive eigener Action Items und Erinnerungen bei langer Funkstille.',
                 ],
                 [
                     'icon' => 'chart-bar',
                     'title' => 'Team-Metriken & Health',
-                    'description' => 'Velocity, Burndown und regelmäßige Team-Health-Checks auf einen Blick.',
+                    'description' => 'Velocity-Proxy, Übersicht häufig überzogener Event-Typen und ein Team-Health-Indikator auf einen Blick.',
                 ],
                 [
-                    'icon' => 'academic-cap',
-                    'title' => 'Coaching-Assistent',
-                    'description' => 'Checklisten und Hinweise, damit kein Scrum-Event-Detail vergessen wird.',
-                ],
-                [
-                    'icon' => 'user-group',
-                    'title' => 'Mehrere Teams',
-                    'description' => 'Scrum-of-Scrums-Ansicht für Scrum Master, die mehrere Teams betreuen.',
+                    'icon' => 'book-open',
+                    'title' => 'Scrum-Master-Tagebuch',
+                    'description' => 'Drei Fragen zur täglichen Selbstreflexion — durchsuchbar, nach Zeitraum filterbar und mit Emotionen taggbar.',
                 ],
             ] as $feature)
                 <flux:card class="flex flex-col gap-3">

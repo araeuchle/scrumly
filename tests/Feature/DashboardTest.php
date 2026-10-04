@@ -2,6 +2,7 @@
 
 use App\Livewire\Dashboard;
 use App\Models\ActionItem;
+use App\Models\JournalEntry;
 use App\Models\OneOnOne;
 use App\Models\TeamMember;
 use Livewire\Livewire;
@@ -41,4 +42,21 @@ test('one-on-one action items do not count as open retro action items on the das
     Livewire::actingAs($owner)
         ->test(Dashboard::class)
         ->assertDontSee('Persönliches 1:1-Thema');
+});
+
+test('the dashboard reminds the user when there is no journal entry for today', function () {
+    [, $owner] = createTeamForOwner();
+
+    Livewire::actingAs($owner)
+        ->test(Dashboard::class)
+        ->assertSee('Noch kein Tagebucheintrag für heute');
+});
+
+test('the dashboard does not remind the user once a journal entry for today exists', function () {
+    [, $owner] = createTeamForOwner();
+    JournalEntry::factory()->for($owner)->create(['entry_date' => now()->toDateString()]);
+
+    Livewire::actingAs($owner)
+        ->test(Dashboard::class)
+        ->assertDontSee('Noch kein Tagebucheintrag für heute');
 });

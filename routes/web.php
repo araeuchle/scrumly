@@ -6,6 +6,7 @@ use App\Livewire\Auth\Register;
 use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Dashboard;
 use App\Livewire\Impediments\Index as ImpedimentIndex;
+use App\Livewire\Journal\Index as JournalIndex;
 use App\Livewire\SprintEvents\Show as SprintEventShow;
 use App\Livewire\Sprints\Create as SprintCreate;
 use App\Livewire\Sprints\Index as SprintIndex;
@@ -31,6 +32,7 @@ Route::middleware('guest')->group(function (): void {
 
 Route::middleware('auth')->group(function (): void {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
+    Route::get('/journal', JournalIndex::class)->name('journal.index');
 
     Route::get('/teams', TeamIndex::class)->name('teams.index');
     Route::get('/teams/{team}/members', TeamMembers::class)->name('teams.members');

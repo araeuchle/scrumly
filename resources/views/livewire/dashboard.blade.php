@@ -6,6 +6,18 @@
         </flux:text>
     </div>
 
+    @unless ($hasJournalEntryToday)
+        <flux:callout color="blue" icon="book-open" heading="Noch kein Tagebucheintrag für heute">
+            <flux:callout.text>Nimm dir kurz Zeit für die drei Reflexionsfragen des Tages.</flux:callout.text>
+
+            <x-slot:actions>
+                <flux:button variant="primary" :href="route('journal.index')" wire:navigate>
+                    Jetzt eintragen
+                </flux:button>
+            </x-slot:actions>
+        </flux:callout>
+    @endunless
+
     @if ($teams->isEmpty())
         <flux:card class="flex flex-col items-center gap-3 p-12 text-center">
             <flux:icon icon="user-group" variant="outline" class="size-10 text-zinc-400" />
